@@ -24,9 +24,15 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import secureLocalStorage from "react-secure-storage"
+import { useRouter } from "next/navigation"
 
 export function NavUser({
-  user,
+  user = {
+    name: "Admin",
+    email: "admin@pragati",
+    avatar: "/avatars/shadcn.jpg",
+  },
 }: {
   user: {
     name: string
@@ -35,6 +41,7 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
 
   return (
     <SidebarMenu>
@@ -75,7 +82,11 @@ export function NavUser({
               </div>
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
-            <DropdownMenuItem>
+            <DropdownMenuItem onClick={(e) => {
+              e.preventDefault();
+              secureLocalStorage.clear();
+              router.replace("/")
+            }}>
               <LogOut />
               Log out
             </DropdownMenuItem>
