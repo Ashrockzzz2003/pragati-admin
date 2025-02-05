@@ -31,11 +31,11 @@ export function LoginForm({
   const handleLogin = async () => {
     setLoading(true)
     try {
-      console.log("[DEBUG] Logging in with:", {
-        userEmail: email,
-        userPassword: password,
-      })
-      console.log("[DEBUG] Fetching from:", api.LOGIN_URL)
+      // console.log("[DEBUG] Logging in with:", {
+      //   userEmail: email,
+      //   userPassword: password,
+      // })
+      // console.log("[DEBUG] Fetching from:", api.LOGIN_URL)
       const response = await fetch(api.LOGIN_URL, {
         method: "POST",
         headers: {
