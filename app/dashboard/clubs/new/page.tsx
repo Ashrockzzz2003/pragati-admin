@@ -1,6 +1,6 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -8,17 +8,17 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { api } from "@/lib/api";
 import { generateNavItems } from "@/lib/nav-manager";
 import { PlusCircle } from "lucide-react";
@@ -42,7 +42,8 @@ export default function Page() {
     const router = useRouter();
 
     useEffect(() => {
-        const _user = JSON.parse(secureLocalStorage.getItem("u") as string) ?? {};
+        const _user =
+            JSON.parse(secureLocalStorage.getItem("u") as string) ?? {};
         setProgress(50);
         if (_user.userName && _user.userEmail) {
             setUser({
@@ -52,9 +53,9 @@ export default function Page() {
             });
             setProgress(100);
         } else {
-            router.replace("/")
+            router.replace("/");
         }
-    }, [router])
+    }, [router]);
 
     const addNewClub = () => {
         setProgress(13);
@@ -62,56 +63,71 @@ export default function Page() {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${secureLocalStorage.getItem("t")}`,
+                Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
             },
             body: JSON.stringify({
                 clubAbbrevation: "NIL",
                 clubName: clubName,
                 imageUrl: imageUrl,
                 clubHead: clubHead,
-                godName: godName
+                godName: godName,
+            }),
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(100);
+                        router.replace("/dashboard/clubs");
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                        break;
+                }
             })
-        }).then((res) => {
-            switch (res.status) {
-                case 200:
-                    setProgress(100);
-                    router.replace("/dashboard/clubs")
-                    break;
-                case 400:
-                    res.json().then(({ MESSAGE }) => {
-                        alert(MESSAGE)
-                    })
-                    break;
-                case 500:
-                    alert("We are facing some issues at the moment. We are working on it. Please try again later.")
-                    break;
-                default:
-                    alert("Something went wrong. Please refresh the page and try again later.")
-                    break;
-            }
-        }).catch((err) => {
-            console.error(err)
-            alert("Something went wrong. Please refresh the page and try again later.")
-        }).finally(() => {
-            setProgress(100);
-        });
-    }
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(100);
+            });
+    };
 
-    return (user.name === "" || user.email === "" || progress < 100) ? (
+    return user.name === "" || user.email === "" || progress < 100 ? (
         <div className="flex items-center justify-center h-screen w-[50%] ml-auto mr-auto">
             <Progress value={progress} />
         </div>
     ) : (
         <SidebarProvider>
-            <AppSidebar user={user} navItems={generateNavItems(
-                "/dashboard/clubs",
-                "/dashboard/clubs/new"
-            )} />
+            <AppSidebar
+                user={user}
+                navItems={generateNavItems(
+                    "/dashboard/clubs",
+                    "/dashboard/clubs/new",
+                )}
+            />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
+                        <Separator
+                            orientation="vertical"
+                            className="mr-2 h-4"
+                        />
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem>
@@ -121,7 +137,9 @@ export default function Page() {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Admin Dashboard</BreadcrumbPage>
+                                    <BreadcrumbPage>
+                                        Admin Dashboard
+                                    </BreadcrumbPage>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
@@ -139,10 +157,13 @@ export default function Page() {
                 <h1 className="text-2xl font-semibold mx-4">Create New Tag</h1>
                 <div className="bg-muted/50 m-4 p-4 rounded-xl flex flex-col gap-4">
                     {/* ShadCN Input and Button */}
-                    <form className="grid gap-6" onSubmit={(e) => {
-                        e.preventDefault();
-                        addNewClub();
-                    }}>
+                    <form
+                        className="grid gap-6"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            addNewClub();
+                        }}
+                    >
                         <div className="grid gap-2">
                             <Label htmlFor="clubName">Club Name</Label>
                             <Input
@@ -177,7 +198,9 @@ export default function Page() {
                             />
                         </div>
                         <div className="grid gap-2">
-                            <Label htmlFor="imageUrl">Club Logo Image URL</Label>
+                            <Label htmlFor="imageUrl">
+                                Club Logo Image URL
+                            </Label>
                             <Input
                                 type="url"
                                 id="imageUrl"
@@ -197,8 +220,7 @@ export default function Page() {
                         </Button>
                     </form>
                 </div>
-
             </SidebarInset>
         </SidebarProvider>
-    )
+    );
 }

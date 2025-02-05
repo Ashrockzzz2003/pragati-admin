@@ -1,7 +1,7 @@
-import * as React from "react"
+import * as React from "react";
 
-import { useMediaQuery } from "@/hooks/use-media-query"
-import { Button } from "@/components/ui/button"
+import { useMediaQuery } from "@/hooks/use-media-query";
+import { Button } from "@/components/ui/button";
 import {
     Dialog,
     DialogContent,
@@ -9,7 +9,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from "@/components/ui/dialog"
+} from "@/components/ui/dialog";
 import {
     Drawer,
     DrawerClose,
@@ -19,13 +19,13 @@ import {
     DrawerHeader,
     DrawerTitle,
     DrawerTrigger,
-} from "@/components/ui/drawer"
-import { Label } from "@/components/ui/label"
-import { Input } from "@/components/ui/input"
-import { Edit3, Loader2 } from "lucide-react"
-import { cn } from "@/lib/utils"
-import secureLocalStorage from "react-secure-storage"
-import { api } from "@/lib/api"
+} from "@/components/ui/drawer";
+import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
+import { Edit3, Loader2 } from "lucide-react";
+import { cn } from "@/lib/utils";
+import secureLocalStorage from "react-secure-storage";
+import { api } from "@/lib/api";
 
 const editTag = (
     tagID: string,
@@ -45,38 +45,47 @@ const editTag = (
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
-            "Authorization": `Bearer ${secureLocalStorage.getItem("t")}`,
+            Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
         },
         body: JSON.stringify({
             tagAbbrevation,
             tagName,
             tagID: parseInt(tagID),
+        }),
+    })
+        .then((res) => {
+            switch (res.status) {
+                case 200:
+                    setLoading(false);
+                    onSuccess();
+                    break;
+                case 400:
+                    res.json().then(({ MESSAGE }) => {
+                        alert(MESSAGE);
+                    });
+                    break;
+                case 500:
+                    alert(
+                        "We are facing some issues at the moment. We are working on it. Please try again later.",
+                    );
+                    break;
+                default:
+                    alert(
+                        "Something went wrong. Please refresh the page and try again later.",
+                    );
+                    break;
+            }
         })
-    }).then((res) => {
-        switch (res.status) {
-            case 200:
-                setLoading(false);
-                onSuccess();
-                break;
-            case 400:
-                res.json().then(({ MESSAGE }) => {
-                    alert(MESSAGE)
-                })
-                break;
-            case 500:
-                alert("We are facing some issues at the moment. We are working on it. Please try again later.")
-                break;
-            default:
-                alert("Something went wrong. Please refresh the page and try again later.")
-                break;
-        }
-    }).catch((err) => {
-        console.error(err)
-        alert("Something went wrong. Please refresh the page and try again later.")
-    }).finally(() => {
-        setLoading(false);
-    });
-}
+        .catch((err) => {
+            console.error(err);
+            alert(
+                "Something went wrong. Please refresh the page and try again later.",
+            );
+        })
+        .finally(() => {
+            setLoading(false);
+        });
+};
 
 export function EditTag({
     tagID,
@@ -84,16 +93,18 @@ export function EditTag({
     initialTagAbbrevation,
     onSuccess,
 }: {
-    tagID: string,
-    initialTagName: string,
-    initialTagAbbrevation: string,
-    onSuccess: () => void,
+    tagID: string;
+    initialTagName: string;
+    initialTagAbbrevation: string;
+    onSuccess: () => void;
 }) {
-    const [open, setOpen] = React.useState(false)
-    const isDesktop = useMediaQuery("(min-width: 768px)")
-    const [tagName, setTagName] = React.useState(initialTagName)
-    const [tagAbbrevation, setTagAbbrevation] = React.useState(initialTagAbbrevation)
-    const [loading, setLoading] = React.useState(false)
+    const [open, setOpen] = React.useState(false);
+    const isDesktop = useMediaQuery("(min-width: 768px)");
+    const [tagName, setTagName] = React.useState(initialTagName);
+    const [tagAbbrevation, setTagAbbrevation] = React.useState(
+        initialTagAbbrevation,
+    );
+    const [loading, setLoading] = React.useState(false);
 
     if (isDesktop) {
         return (
@@ -127,7 +138,7 @@ export function EditTag({
                     />
                 </DialogContent>
             </Dialog>
-        )
+        );
     }
 
     return (
@@ -163,7 +174,7 @@ export function EditTag({
                 </DrawerFooter>
             </DrawerContent>
         </Drawer>
-    )
+    );
 }
 
 function EditTagForm({
@@ -177,25 +188,36 @@ function EditTagForm({
     setTagAbbrevation,
     onSuccess,
 }: {
-    classname: string,
-    tagID: string,
-    loading: boolean,
-    setLoading: (loading: boolean) => void,
-    tagName: string,
-    setTagName: (tagName: string) => void,
-    tagAbbrevation: string,
-    setTagAbbrevation: (tagAbbrevation: string) => void,
-    onSuccess: () => void,
+    classname: string;
+    tagID: string;
+    loading: boolean;
+    setLoading: (loading: boolean) => void;
+    tagName: string;
+    setTagName: (tagName: string) => void;
+    tagAbbrevation: string;
+    setTagAbbrevation: (tagAbbrevation: string) => void;
+    onSuccess: () => void;
 }) {
     return (
         <div className={cn("grid items-start gap-4", classname)}>
-            <form className="grid gap-6" onSubmit={(e) => {
-                e.preventDefault();
-                editTag(tagID, tagName, tagAbbrevation, setLoading, onSuccess);
-            }}>
+            <form
+                className="grid gap-6"
+                onSubmit={(e) => {
+                    e.preventDefault();
+                    editTag(
+                        tagID,
+                        tagName,
+                        tagAbbrevation,
+                        setLoading,
+                        onSuccess,
+                    );
+                }}
+            >
                 <div className="grid gap-2">
                     <Label htmlFor="tagAbbrevation">Tag</Label>
-                    <p className="text-sm font-extralight text-secondary-foreground">This will be used as a unique identifier for the tag.</p>
+                    <p className="text-sm font-extralight text-secondary-foreground">
+                        This will be used as a unique identifier for the tag.
+                    </p>
                     <Input
                         type="text"
                         id="tagAbbrevation"
@@ -216,10 +238,7 @@ function EditTagForm({
                         onChange={(e) => setTagName(e.target.value)}
                     />
                 </div>
-                <Button
-                    type="submit"
-                    className="w-full"
-                >
+                <Button type="submit" className="w-full">
                     {loading ? (
                         <Loader2 className="animate-spin" />
                     ) : (
@@ -229,5 +248,5 @@ function EditTagForm({
                 </Button>
             </form>
         </div>
-    )
+    );
 }

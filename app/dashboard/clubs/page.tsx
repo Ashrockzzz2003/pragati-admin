@@ -1,6 +1,6 @@
 "use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -8,15 +8,15 @@ import {
     BreadcrumbList,
     BreadcrumbPage,
     BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
+} from "@/components/ui/breadcrumb";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Separator } from "@/components/ui/separator"
+import { Separator } from "@/components/ui/separator";
 import {
     SidebarInset,
     SidebarProvider,
     SidebarTrigger,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 import { api } from "@/lib/api";
 import { generateNavItems } from "@/lib/nav-manager";
 import { Binoculars, Edit3, PlusCircle, Trash2 } from "lucide-react";
@@ -37,36 +37,45 @@ export default function Page() {
             method: "DELETE",
             headers: {
                 "Content-Type": "application/json",
-                "Authorization": `Bearer ${secureLocalStorage.getItem("t")}`,
+                Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
             },
             body: JSON.stringify({
-                "clubID": parseInt(clubId),
+                clubID: parseInt(clubId),
+            }),
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(100);
+                        window.location.reload();
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                        break;
+                }
             })
-        }).then((res) => {
-            switch (res.status) {
-                case 200:
-                    setProgress(100);
-                    window.location.reload();
-                    break;
-                case 400:
-                    res.json().then(({ MESSAGE }) => {
-                        alert(MESSAGE)
-                    })
-                    break;
-                case 500:
-                    alert("We are facing some issues at the moment. We are working on it. Please try again later.")
-                    break;
-                default:
-                    alert("Something went wrong. Please refresh the page and try again later.")
-                    break;
-            }
-        }).catch((err) => {
-            console.error(err)
-            alert("Something went wrong. Please refresh the page and try again later.")
-        }).finally(() => {
-            setProgress(100);
-        });
-    }
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(100);
+            });
+    };
 
     const [user, setUser] = useState({
         name: "",
@@ -75,7 +84,8 @@ export default function Page() {
     });
 
     useEffect(() => {
-        const _user = JSON.parse(secureLocalStorage.getItem("u") as string) ?? {};
+        const _user =
+            JSON.parse(secureLocalStorage.getItem("u") as string) ?? {};
         setProgress(50);
         if (_user.userName && _user.userEmail) {
             setUser({
@@ -85,7 +95,7 @@ export default function Page() {
             });
             setProgress(66);
         } else {
-            router.replace("/")
+            router.replace("/");
         }
 
         fetch(api.CLUBS_URL, {
@@ -93,50 +103,65 @@ export default function Page() {
             headers: {
                 "Content-Type": "application/json",
             },
-        }).then((res) => {
-            switch (res.status) {
-                case 200:
-                    setProgress(80);
-                    res.json().then((data) => {
-                        setClubs(data.DATA);
-                        setProgress(100);
-                    });
-                    break;
-                case 400:
-                    res.json().then(({ MESSAGE }) => {
-                        alert(MESSAGE)
-                    })
-                    break;
-                case 500:
-                    alert("We are facing some issues at the moment. We are working on it. Please try again later.")
-                    break;
-                default:
-                    alert("Something went wrong. Please refresh the page and try again later.")
-                    break;
-            }
-        }).catch((err) => {
-            console.error(err)
-            alert("Something went wrong. Please refresh the page and try again later.")
-        }).finally(() => {
-            setProgress(100);
-        });
-    }, [router])
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(80);
+                        res.json().then((data) => {
+                            setClubs(data.DATA);
+                            setProgress(100);
+                        });
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                        break;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(100);
+            });
+    }, [router]);
 
-    return (user.name === "" || user.email === "" || progress < 100) ? (
+    return user.name === "" || user.email === "" || progress < 100 ? (
         <div className="flex items-center justify-center h-screen w-[50%] ml-auto mr-auto">
             <Progress value={progress} />
         </div>
     ) : (
         <SidebarProvider>
-            <AppSidebar user={user} navItems={generateNavItems(
-                "/dashboard/clubs",
-                "/dashboard/clubs"
-            )} />
+            <AppSidebar
+                user={user}
+                navItems={generateNavItems(
+                    "/dashboard/clubs",
+                    "/dashboard/clubs",
+                )}
+            />
             <SidebarInset>
                 <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
                     <div className="flex items-center gap-2 px-4">
                         <SidebarTrigger className="-ml-1" />
-                        <Separator orientation="vertical" className="mr-2 h-4" />
+                        <Separator
+                            orientation="vertical"
+                            className="mr-2 h-4"
+                        />
                         <Breadcrumb>
                             <BreadcrumbList>
                                 <BreadcrumbItem>
@@ -146,7 +171,9 @@ export default function Page() {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Admin Dashboard</BreadcrumbPage>
+                                    <BreadcrumbPage>
+                                        Admin Dashboard
+                                    </BreadcrumbPage>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
@@ -161,54 +188,96 @@ export default function Page() {
                     <h1 className="text-2xl font-semibold">Clubs</h1>
                     {/* clubName, imageUrl, clubHead, clubAbbrevation, godName, createdAt */}
                     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                        {clubs.map((club: {
-                            clubID: string;
-                            clubName: string;
-                            imageUrl: string;
-                            clubHead: string;
-                            clubAbbrevation: string;
-                            godName: string;
-                            createdAt: string;
-                        }) => (
-                            <div key={club.clubID} className="flex flex-col gap-4 p-2 bg-secondary/80 rounded-md shadow-sm hover:bg-secondary transition-colors duration-200 cursor-pointer border border-muted w-full">
-                                <div className="flex flex-row justify-between gap-1">
-                                    <div className="flex gap-4 flex-row items-center">
-                                        <Image src={club.imageUrl} alt={club.clubName} height={400} width={88} className="w-32 h-32 rounded-full object-cover border border-muted" />
-                                        <div className="flex flex-col">
-                                            <h2 className="text-lg font-semibold text-foreground">{club.clubName}</h2>
-                                            <p className="text-xs text-primary">{club.godName}</p>
-                                            <p className="text-xs text-card-foreground">{club.clubHead}</p>
-                                            <p className="text-xs text-card-foreground">Created on {new Date(club.createdAt).toLocaleDateString()}</p>
+                        {clubs.map(
+                            (club: {
+                                clubID: string;
+                                clubName: string;
+                                imageUrl: string;
+                                clubHead: string;
+                                clubAbbrevation: string;
+                                godName: string;
+                                createdAt: string;
+                            }) => (
+                                <div
+                                    key={club.clubID}
+                                    className="flex flex-col gap-4 p-2 bg-secondary/80 rounded-md shadow-sm hover:bg-secondary transition-colors duration-200 cursor-pointer border border-muted w-full"
+                                >
+                                    <div className="flex flex-row justify-between gap-1">
+                                        <div className="flex gap-4 flex-row items-center">
+                                            <Image
+                                                src={club.imageUrl}
+                                                alt={club.clubName}
+                                                height={400}
+                                                width={88}
+                                                className="w-32 h-32 rounded-full object-cover border border-muted"
+                                            />
+                                            <div className="flex flex-col">
+                                                <h2 className="text-lg font-semibold text-foreground">
+                                                    {club.clubName}
+                                                </h2>
+                                                <p className="text-xs text-primary">
+                                                    {club.godName}
+                                                </p>
+                                                <p className="text-xs text-card-foreground">
+                                                    {club.clubHead}
+                                                </p>
+                                                <p className="text-xs text-card-foreground">
+                                                    Created on{" "}
+                                                    {new Date(
+                                                        club.createdAt,
+                                                    ).toLocaleDateString()}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        <div className="flex flex-col justify-center gap-2 m-4">
+                                            <Button
+                                                variant="outline"
+                                                className="border border-muted"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                }}
+                                            >
+                                                <Edit3 className="w-6 h-6" />
+                                            </Button>
+                                            <Button
+                                                variant="outline"
+                                                className="border border-muted text-red-400"
+                                                onClick={(e) => {
+                                                    e.preventDefault();
+                                                    deleteClub(club.clubID);
+                                                }}
+                                            >
+                                                <Trash2 className="w-6 h-6" />
+                                            </Button>
                                         </div>
                                     </div>
-                                    <div className="flex flex-col justify-center gap-2 m-4">
-                                        <Button variant="outline" className="border border-muted" onClick={(e) => {
-                                            e.preventDefault();
-                                        }}>
-                                            <Edit3 className="w-6 h-6" />
-                                        </Button>
-                                        <Button variant="outline" className="border border-muted text-red-400" onClick={(e) => {
-                                            e.preventDefault();
-                                            deleteClub(club.clubID);
-                                        }}>
-                                            <Trash2 className="w-6 h-6" />
-                                        </Button>
-                                    </div>
+                                    <Button
+                                        variant="default"
+                                        className="w-full text-center"
+                                    >
+                                        View Club Events
+                                    </Button>
                                 </div>
-                                <Button variant="default" className="w-full text-center">
-                                    View Club Events
-                                </Button>
-                            </div>
-                        ))}
+                            ),
+                        )}
 
                         {clubs.length === 0 && (
                             <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4 col-span-full">
                                 <Binoculars className="w-128 h-128 my-2" />
-                                <p className="text-lg font-semibold text-foreground">No clubs found</p>
-                                <p className="text-sm text-card-foreground">Create a new club to get started</p>
+                                <p className="text-lg font-semibold text-foreground">
+                                    No clubs found
+                                </p>
+                                <p className="text-sm text-card-foreground">
+                                    Create a new club to get started
+                                </p>
                                 <hr className="border-t border-muted w-1/2 my-8" />
-                                <Button onClick={() => router.push("/dashboard/clubs/new")}>
-                                    <PlusCircle className="w-128 h-128" /> Create a new club
+                                <Button
+                                    onClick={() =>
+                                        router.push("/dashboard/clubs/new")
+                                    }
+                                >
+                                    <PlusCircle className="w-128 h-128" />{" "}
+                                    Create a new club
                                 </Button>
                             </div>
                         )}
@@ -216,5 +285,5 @@ export default function Page() {
                 </div>
             </SidebarInset>
         </SidebarProvider>
-    )
+    );
 }
