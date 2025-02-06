@@ -13,6 +13,7 @@ import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { MultiSelect } from "@/components/ui/multi-select";
 import { Progress } from "@/components/ui/progress";
 import {
     Select,
@@ -51,10 +52,13 @@ export default function Page() {
     const [maxRegistrations, setMaxRegistrations] = useState("10");
     const [isPerHeadFee, setIsPerHeadFee] = useState(false);
 
-    // TODO: Implement Multi-select.
-    // const [organizerIDs, setOrganizerIDs] = useState([]);
-    // const [tagIDs, setTagIDs] = useState([]);
-    // const [clubID, setClubID] = useState("");
+    const [orgData, setOrgData] = useState([]);
+    const [tagData, setTagData] = useState([]);
+    const [clubData, setClubData] = useState([]);
+
+    const [organizerIDs, setOrganizerIDs] = useState<string[]>([]);
+    const [tagIDs, setTagIDs] = useState<string[]>([]);
+    const [clubID, setClubID] = useState("");
 
     const [user, setUser] = useState({
         name: "",
@@ -75,11 +79,169 @@ export default function Page() {
                 email: _user.userEmail,
                 avatar: "https://gravatar.com/avatar/dd55aeae8806246ac1d0ab0c6baa34f5?&d=robohash&r=x",
             });
-            setProgress(100);
+            if (orgData.length > 0 && tagData.length > 0) {
+                setProgress(100);
+            }
         } else {
             router.replace("/");
         }
-    }, [router]);
+
+        fetch(api.ORGS_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(80);
+                        res.json().then((data) => {
+                            const _orgData = data.DATA.map(
+                                (item: {
+                                    organizerID: string;
+                                    organizerName: string;
+                                }) => {
+                                    return {
+                                        value: item.organizerID,
+                                        label: item.organizerName,
+                                    };
+                                },
+                            );
+                            setOrgData(_orgData);
+                            setProgress(99);
+                        });
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                        break;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(100);
+            });
+
+        fetch(api.TAGS_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(80);
+                        res.json().then((data) => {
+                            const _tagData = data.DATA.map(
+                                (item: { tagID: string; tagName: string }) => {
+                                    return {
+                                        value: item.tagID,
+                                        label: item.tagName,
+                                    };
+                                },
+                            );
+                            setTagData(_tagData);
+                            setProgress(99);
+                        });
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                        break;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(100);
+            });
+
+        fetch(api.CLUBS_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(80);
+                        res.json().then((data) => {
+                            const _clubData = data.DATA.map(
+                                (item: {
+                                    clubID: string;
+                                    clubName: string;
+                                }) => {
+                                    return {
+                                        value: item.clubID.toString(),
+                                        label: item.clubName,
+                                    };
+                                },
+                            );
+                            setClubData(_clubData);
+                            setProgress(99);
+                        });
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                        break;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(100);
+            });
+    }, [router, orgData.length, tagData.length]);
 
     const addNewEvent = () => {
         setProgress(13);
@@ -102,6 +264,9 @@ export default function Page() {
                 eventDate,
                 maxRegistrations,
                 isPerHeadFee,
+                organizerIDs: organizerIDs.map((id) => parseInt(id)),
+                tagIDs: tagIDs.map((id) => parseInt(id)),
+                clubID: parseInt(clubID),
             }),
         })
             .then((res) => {
@@ -211,6 +376,43 @@ export default function Page() {
                             />
                         </div>
 
+                        <div className="grid gap-2">
+                            <Label
+                                htmlFor="imageUrl"
+                                className="text-lg font-semibold"
+                            >
+                                Select the club that is organizing the event.
+                            </Label>
+                            <Select
+                                onValueChange={(value) => {
+                                    setClubID(value);
+                                }}
+                                value={clubID}
+                            >
+                                <SelectTrigger className="border focus:border-primary-focus">
+                                    <SelectValue placeholder="Select the club" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectGroup>
+                                        <SelectLabel>Select a club</SelectLabel>
+                                        {clubData.map(
+                                            (item: {
+                                                value: string;
+                                                label: string;
+                                            }) => (
+                                                <SelectItem
+                                                    key={item.value}
+                                                    value={item.value}
+                                                >
+                                                    {item.label}
+                                                </SelectItem>
+                                            ),
+                                        )}
+                                    </SelectGroup>
+                                </SelectContent>
+                            </Select>
+                        </div>
+
                         <div className="flex flex-row gap-2 border rounded-md p-4">
                             <Checkbox
                                 id="isGroup"
@@ -225,12 +427,12 @@ export default function Page() {
                                     htmlFor="isGroup"
                                     className="text-lg font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
-                                    Is this a group event?
+                                    Is the a group event?
+                                    <p className="text-sm text-muted-foreground font-light">
+                                        Check this box if this event is a group
+                                        (team) event.
+                                    </p>
                                 </label>
-                                <p className="text-sm text-muted-foreground">
-                                    Check this box if this event is a group
-                                    event.
-                                </p>
                             </div>
                         </div>
 
@@ -352,12 +554,12 @@ export default function Page() {
                                     className="text-lg font-semibold leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
                                 >
                                     Is the given fee per head?
+                                    <p className="text-sm text-muted-foreground font-light">
+                                        Check this box if this event is a per
+                                        head fee event. If not, the fee will be
+                                        charged per team.
+                                    </p>
                                 </label>
-                                <p className="text-sm text-muted-foreground">
-                                    Check this box if this event is a per head
-                                    fee event. If not, the fee will be charged
-                                    per team.
-                                </p>
                             </div>
                         </div>
 
@@ -421,6 +623,30 @@ export default function Page() {
                                 }
                                 required
                                 className="border focus:border-primary-focus"
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label className="text-lg font-semibold">
+                                Event Organizers
+                            </Label>
+                            <MultiSelect
+                                data={orgData}
+                                name="organizers"
+                                selected={organizerIDs}
+                                setSelected={setOrganizerIDs}
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label className="text-lg font-semibold">
+                                Tags for events
+                            </Label>
+                            <MultiSelect
+                                data={tagData}
+                                name="tags"
+                                selected={tagIDs}
+                                setSelected={setTagIDs}
                             />
                         </div>
 
