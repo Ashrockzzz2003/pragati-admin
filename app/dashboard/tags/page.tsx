@@ -200,7 +200,7 @@ export default function Page() {
                                     className="flex justify-between items-center p-4 bg-secondary/80 rounded-md shadow-sm hover:bg-secondary transition-colors duration-200 cursor-pointer"
                                 >
                                     <div className="flex gap-4 flex-row items-center">
-                                        <div className="flex items-center justify-center w-24 h-12 bg-primary text-primary-foreground rounded-full">
+                                        <div className="flex items-center justify-center w-24 h-12 bg-primary text-primary-foreground rounded-full border-2 border-background font-semibold">
                                             {tag.tagAbbrevation}
                                         </div>
                                         <div className="flex flex-col">

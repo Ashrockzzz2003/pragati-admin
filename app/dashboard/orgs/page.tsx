@@ -1,6 +1,7 @@
 "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
+import { EditOrg } from "@/components/org/edit-org-form";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -216,7 +217,17 @@ export default function Page() {
                                         </p>
                                     </div>
                                     <div>
-                                        {/* TODO: Edit Org */}
+                                        <EditOrg
+                                            orgID={org.organizerID}
+                                            initialOrganizerName={
+                                                org.organizerName
+                                            }
+                                            initialPhoneNumber={org.phoneNumber}
+                                            onSuccess={() => {
+                                                setProgress(13);
+                                                window.location.reload();
+                                            }}
+                                        />
                                         <Button
                                             variant="outline"
                                             onClick={(e) => {

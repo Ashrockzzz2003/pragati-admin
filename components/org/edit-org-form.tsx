@@ -27,29 +27,24 @@ import { cn } from "@/lib/utils";
 import secureLocalStorage from "react-secure-storage";
 import { api } from "@/lib/api";
 
-const editClub = (
-    clubID: string,
-    clubName: string,
-    godName: string,
-    imageUrl: string,
-    clubHead: string,
+const editOrg = (
+    orgID: string,
+    organizerName: string,
+    phoneNumber: string,
     setLoading: (loading: boolean) => void,
     onSuccess: () => void,
 ) => {
     setLoading(true);
-    fetch(api.CLUBS_URL, {
+    fetch(api.ORGS_URL, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
         },
         body: JSON.stringify({
-            godName,
-            clubName,
-            imageUrl,
-            clubHead,
-            clubAbbrevation: clubName.substring(0, 9).toUpperCase(),
-            clubID: parseInt(clubID),
+            phoneNumber,
+            organizerName,
+            organizerID: parseInt(orgID),
         }),
     })
         .then((res) => {
@@ -86,28 +81,22 @@ const editClub = (
         });
 };
 
-export function EditClub({
-    clubID,
-    initialClubName,
-    initialGodName,
-    initialImageUrl,
-    initialClubHead,
+export function EditOrg({
+    orgID,
+    initialOrganizerName,
+    initialPhoneNumber,
     onSuccess,
 }: {
-    clubID: string;
-    initialClubName: string;
-    initialGodName: string;
-    initialImageUrl: string;
-    initialClubHead: string;
+    orgID: string;
+    initialOrganizerName: string;
+    initialPhoneNumber: string;
     onSuccess: () => void;
 }) {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const [clubName, setClubName] = React.useState(initialClubName);
-    const [godName, setGodName] = React.useState(initialGodName);
-    const [imageUrl, setImageUrl] = React.useState(initialImageUrl);
-    const [clubHead, setClubHead] = React.useState(initialClubHead);
-
+    const [organizerName, setOrganizerName] =
+        React.useState(initialOrganizerName);
+    const [phoneNumber, setPhoneNumber] = React.useState(initialPhoneNumber);
     const [loading, setLoading] = React.useState(false);
 
     if (isDesktop) {
@@ -121,22 +110,18 @@ export function EditClub({
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Edit Club</DialogTitle>
+                        <DialogTitle>Edit Organizer Details</DialogTitle>
                         <DialogDescription>
-                            {"Edit the club data here."}
+                            {"Edit the organizer name and phone number here."}
                         </DialogDescription>
                     </DialogHeader>
-                    <EditClubForm
+                    <EditOrganizerForm
                         classname="px-0"
-                        clubName={clubName}
-                        setClubName={setClubName}
-                        godName={godName}
-                        setGodName={setGodName}
-                        imageUrl={imageUrl}
-                        setImageUrl={setImageUrl}
-                        clubHead={clubHead}
-                        setClubHead={setClubHead}
-                        clubID={clubID}
+                        organizerName={organizerName}
+                        setOrganizerName={setOrganizerName}
+                        phoneNumber={phoneNumber}
+                        setPhoneNumber={setPhoneNumber}
+                        orgID={orgID}
                         loading={loading}
                         setLoading={setLoading}
                         onSuccess={() => {
@@ -158,22 +143,18 @@ export function EditClub({
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
-                    <DrawerTitle>Edit Club</DrawerTitle>
+                    <DrawerTitle>Edit Organizer Details</DrawerTitle>
                     <DrawerDescription>
-                        {"Edit the club data here."}
+                        {"Edit the organizer name and phone number here."}
                     </DrawerDescription>
                 </DrawerHeader>
-                <EditClubForm
+                <EditOrganizerForm
                     classname="px-4"
-                    clubName={clubName}
-                    setClubName={setClubName}
-                    godName={godName}
-                    setGodName={setGodName}
-                    imageUrl={imageUrl}
-                    setImageUrl={setImageUrl}
-                    clubHead={clubHead}
-                    setClubHead={setClubHead}
-                    clubID={clubID}
+                    organizerName={organizerName}
+                    setOrganizerName={setOrganizerName}
+                    phoneNumber={phoneNumber}
+                    setPhoneNumber={setPhoneNumber}
+                    orgID={orgID}
                     loading={loading}
                     setLoading={setLoading}
                     onSuccess={onSuccess}
@@ -188,33 +169,25 @@ export function EditClub({
     );
 }
 
-function EditClubForm({
+function EditOrganizerForm({
     classname,
-    clubID,
+    orgID,
     loading,
     setLoading,
-    clubName,
-    setClubName,
-    godName,
-    setGodName,
-    imageUrl,
-    setImageUrl,
-    clubHead,
-    setClubHead,
+    organizerName,
+    setOrganizerName,
+    phoneNumber,
+    setPhoneNumber,
     onSuccess,
 }: {
     classname: string;
-    clubID: string;
+    orgID: string;
     loading: boolean;
     setLoading: (loading: boolean) => void;
-    clubName: string;
-    setClubName: (clubName: string) => void;
-    godName: string;
-    setGodName: (godName: string) => void;
-    imageUrl: string;
-    setImageUrl: (imageUrl: string) => void;
-    clubHead: string;
-    setClubHead: (clubHead: string) => void;
+    organizerName: string;
+    setOrganizerName: (organizerName: string) => void;
+    phoneNumber: string;
+    setPhoneNumber: (phoneNumber: string) => void;
     onSuccess: () => void;
 }) {
     return (
@@ -223,62 +196,37 @@ function EditClubForm({
                 className="grid gap-6"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    editClub(
-                        clubID,
-                        clubName,
-                        godName,
-                        imageUrl,
-                        clubHead,
+                    editOrg(
+                        orgID,
+                        organizerName,
+                        phoneNumber,
                         setLoading,
                         onSuccess,
                     );
                 }}
             >
                 <div className="grid gap-2">
-                    <Label htmlFor="clubName">Club Name</Label>
+                    <Label htmlFor="organizerName">Full Name</Label>
                     <Input
                         type="text"
-                        id="clubName"
-                        value={clubName}
-                        placeholder="BIZIT"
-                        onChange={(e) => setClubName(e.target.value)}
+                        id="organizerName"
+                        value={organizerName}
+                        placeholder="Ananya R"
+                        onChange={(e) => setOrganizerName(e.target.value)}
                         required
                     />
                 </div>
                 <div className="grid gap-2">
-                    <Label htmlFor="clubHead">Club Head</Label>
+                    <Label htmlFor="phoneNumber">Phone Number</Label>
                     <Input
-                        type="text"
-                        id="clubHead"
-                        value={clubHead}
-                        placeholder="Rohit S Warrier"
-                        onChange={(e) => setClubHead(e.target.value)}
+                        type="tel"
+                        id="phoneNumber"
+                        value={phoneNumber}
+                        placeholder="887xxxxxxx"
+                        onChange={(e) => setPhoneNumber(e.target.value)}
                         required
                     />
                 </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="godName">God Name</Label>
-                    <Input
-                        type="text"
-                        id="godName"
-                        value={godName}
-                        placeholder="Athena"
-                        onChange={(e) => setGodName(e.target.value)}
-                        required
-                    />
-                </div>
-                <div className="grid gap-2">
-                    <Label htmlFor="imageUrl">Club Logo Image URL</Label>
-                    <Input
-                        type="url"
-                        id="imageUrl"
-                        value={imageUrl}
-                        placeholder="https://example.com/image.jpg"
-                        onChange={(e) => setImageUrl(e.target.value)}
-                        required
-                    />
-                </div>
-
                 <Button type="submit" className="w-full" disabled={loading}>
                     {loading ? (
                         <Loader2 className="animate-spin" />
