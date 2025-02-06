@@ -1,6 +1,7 @@
 "use client";
 
 import { AppSidebar } from "@/components/app-sidebar";
+import { EditClub } from "@/components/club/edit-club-form";
 import {
     Breadcrumb,
     BreadcrumbItem,
@@ -19,7 +20,7 @@ import {
 } from "@/components/ui/sidebar";
 import { api } from "@/lib/api";
 import { generateNavItems } from "@/lib/nav-manager";
-import { Binoculars, Edit3, PlusCircle, Trash2 } from "lucide-react";
+import { Binoculars, PlusCircle, Trash2 } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -186,8 +187,7 @@ export default function Page() {
 
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Clubs</h1>
-                    {/* clubName, imageUrl, clubHead, clubAbbrevation, godName, createdAt */}
-                    <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                    <div className="flex flex-wrap gap-4">
                         {clubs.map(
                             (club: {
                                 clubID: string;
@@ -200,7 +200,7 @@ export default function Page() {
                             }) => (
                                 <div
                                     key={club.clubID}
-                                    className="flex flex-col gap-4 p-2 bg-secondary/80 rounded-md shadow-sm hover:bg-secondary transition-colors duration-200 cursor-pointer border border-muted w-full"
+                                    className="flex flex-col gap-4 p-2 bg-secondary/80 rounded-md shadow-sm hover:bg-secondary transition-colors duration-200 cursor-pointer border border-muted w-full md:w-fit"
                                 >
                                     <div className="flex flex-row justify-between gap-1">
                                         <div className="flex gap-4 flex-row items-center">
@@ -230,15 +230,16 @@ export default function Page() {
                                             </div>
                                         </div>
                                         <div className="flex flex-col justify-center gap-2 m-4">
-                                            <Button
-                                                variant="outline"
-                                                className="border border-muted"
-                                                onClick={(e) => {
-                                                    e.preventDefault();
-                                                }}
-                                            >
-                                                <Edit3 className="w-6 h-6" />
-                                            </Button>
+                                            <EditClub
+                                                clubID={club.clubID}
+                                                initialClubName={club.clubName}
+                                                initialGodName={club.godName}
+                                                initialImageUrl={club.imageUrl}
+                                                initialClubHead={club.clubHead}
+                                                onSuccess={() =>
+                                                    window.location.reload()
+                                                }
+                                            />
                                             <Button
                                                 variant="outline"
                                                 className="border border-muted text-red-400"
@@ -262,7 +263,7 @@ export default function Page() {
                         )}
 
                         {clubs.length === 0 && (
-                            <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4 col-span-full">
+                            <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4 w-full">
                                 <Binoculars className="w-128 h-128 my-2" />
                                 <p className="text-lg font-semibold text-foreground">
                                     No clubs found

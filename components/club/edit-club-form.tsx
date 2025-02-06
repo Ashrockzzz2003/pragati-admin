@@ -27,30 +27,29 @@ import { cn } from "@/lib/utils";
 import secureLocalStorage from "react-secure-storage";
 import { api } from "@/lib/api";
 
-const editTag = (
-    tagID: string,
-    tagName: string,
-    tagAbbrevation: string,
+const editClub = (
+    clubID: string,
+    clubName: string,
+    godName: string,
+    imageUrl: string,
+    clubHead: string,
     setLoading: (loading: boolean) => void,
     onSuccess: () => void,
 ) => {
-    // console.log("[DEBUG] Editing tag with ID:", tagID);
-    // console.table({
-    //     tagName,
-    //     tagAbbrevation,
-    //     tagID,
-    // });
     setLoading(true);
-    fetch(api.TAGS_URL, {
+    fetch(api.CLUBS_URL, {
         method: "PUT",
         headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
         },
         body: JSON.stringify({
-            tagAbbrevation,
-            tagName,
-            tagID: parseInt(tagID),
+            godName,
+            clubName,
+            imageUrl,
+            clubHead,
+            clubAbbrevation: clubName.substring(0, 9).toUpperCase(),
+            clubID: parseInt(clubID),
         }),
     })
         .then((res) => {
@@ -87,23 +86,28 @@ const editTag = (
         });
 };
 
-export function EditTag({
-    tagID,
-    initialTagName,
-    initialTagAbbrevation,
+export function EditClub({
+    clubID,
+    initialClubName,
+    initialGodName,
+    initialImageUrl,
+    initialClubHead,
     onSuccess,
 }: {
-    tagID: string;
-    initialTagName: string;
-    initialTagAbbrevation: string;
+    clubID: string;
+    initialClubName: string;
+    initialGodName: string;
+    initialImageUrl: string;
+    initialClubHead: string;
     onSuccess: () => void;
 }) {
     const [open, setOpen] = React.useState(false);
     const isDesktop = useMediaQuery("(min-width: 768px)");
-    const [tagName, setTagName] = React.useState(initialTagName);
-    const [tagAbbrevation, setTagAbbrevation] = React.useState(
-        initialTagAbbrevation,
-    );
+    const [clubName, setClubName] = React.useState(initialClubName);
+    const [godName, setGodName] = React.useState(initialGodName);
+    const [imageUrl, setImageUrl] = React.useState(initialImageUrl);
+    const [clubHead, setClubHead] = React.useState(initialClubHead);
+
     const [loading, setLoading] = React.useState(false);
 
     if (isDesktop) {
@@ -117,18 +121,22 @@ export function EditTag({
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
                     <DialogHeader>
-                        <DialogTitle>Edit Tag</DialogTitle>
+                        <DialogTitle>Edit Club</DialogTitle>
                         <DialogDescription>
-                            {"Edit the tag name and abbreviation here."}
+                            {"Edit the club data here."}
                         </DialogDescription>
                     </DialogHeader>
-                    <EditTagForm
+                    <EditClubForm
                         classname="px-0"
-                        tagName={tagName}
-                        setTagName={setTagName}
-                        tagAbbrevation={tagAbbrevation}
-                        setTagAbbrevation={setTagAbbrevation}
-                        tagID={tagID}
+                        clubName={clubName}
+                        setClubName={setClubName}
+                        godName={godName}
+                        setGodName={setGodName}
+                        imageUrl={imageUrl}
+                        setImageUrl={setImageUrl}
+                        clubHead={clubHead}
+                        setClubHead={setClubHead}
+                        clubID={clubID}
                         loading={loading}
                         setLoading={setLoading}
                         onSuccess={() => {
@@ -150,18 +158,22 @@ export function EditTag({
             </DrawerTrigger>
             <DrawerContent>
                 <DrawerHeader className="text-left">
-                    <DrawerTitle>Edit Tag</DrawerTitle>
+                    <DrawerTitle>Edit Club</DrawerTitle>
                     <DrawerDescription>
-                        {"Edit the tag name and abbreviation here."}
+                        {"Edit the club data here."}
                     </DrawerDescription>
                 </DrawerHeader>
-                <EditTagForm
+                <EditClubForm
                     classname="px-4"
-                    tagName={tagName}
-                    setTagName={setTagName}
-                    tagAbbrevation={tagAbbrevation}
-                    setTagAbbrevation={setTagAbbrevation}
-                    tagID={tagID}
+                    clubName={clubName}
+                    setClubName={setClubName}
+                    godName={godName}
+                    setGodName={setGodName}
+                    imageUrl={imageUrl}
+                    setImageUrl={setImageUrl}
+                    clubHead={clubHead}
+                    setClubHead={setClubHead}
+                    clubID={clubID}
                     loading={loading}
                     setLoading={setLoading}
                     onSuccess={onSuccess}
@@ -176,25 +188,33 @@ export function EditTag({
     );
 }
 
-function EditTagForm({
+function EditClubForm({
     classname,
-    tagID,
+    clubID,
     loading,
     setLoading,
-    tagName,
-    setTagName,
-    tagAbbrevation,
-    setTagAbbrevation,
+    clubName,
+    setClubName,
+    godName,
+    setGodName,
+    imageUrl,
+    setImageUrl,
+    clubHead,
+    setClubHead,
     onSuccess,
 }: {
     classname: string;
-    tagID: string;
+    clubID: string;
     loading: boolean;
     setLoading: (loading: boolean) => void;
-    tagName: string;
-    setTagName: (tagName: string) => void;
-    tagAbbrevation: string;
-    setTagAbbrevation: (tagAbbrevation: string) => void;
+    clubName: string;
+    setClubName: (clubName: string) => void;
+    godName: string;
+    setGodName: (godName: string) => void;
+    imageUrl: string;
+    setImageUrl: (imageUrl: string) => void;
+    clubHead: string;
+    setClubHead: (clubHead: string) => void;
     onSuccess: () => void;
 }) {
     return (
@@ -203,40 +223,62 @@ function EditTagForm({
                 className="grid gap-6"
                 onSubmit={(e) => {
                     e.preventDefault();
-                    editTag(
-                        tagID,
-                        tagName,
-                        tagAbbrevation,
+                    editClub(
+                        clubID,
+                        clubName,
+                        godName,
+                        imageUrl,
+                        clubHead,
                         setLoading,
                         onSuccess,
                     );
                 }}
             >
                 <div className="grid gap-2">
-                    <Label htmlFor="tagAbbrevation">Tag</Label>
-                    <p className="text-sm font-extralight text-secondary-foreground">
-                        This will be used as a unique identifier for the tag.
-                    </p>
+                    <Label htmlFor="clubName">Club Name</Label>
                     <Input
                         type="text"
-                        id="tagAbbrevation"
-                        defaultValue={tagAbbrevation}
-                        placeholder="CSE"
+                        id="clubName"
+                        value={clubName}
+                        placeholder="BIZIT"
+                        onChange={(e) => setClubName(e.target.value)}
                         required
-                        onChange={(e) => setTagAbbrevation(e.target.value)}
                     />
                 </div>
                 <div className="grid gap-2">
-                    <Label htmlFor="tagName">One-word Description</Label>
+                    <Label htmlFor="clubHead">Club Head</Label>
                     <Input
                         type="text"
-                        id="tagName"
-                        defaultValue={tagName}
-                        placeholder="Computer Science"
+                        id="clubHead"
+                        value={clubHead}
+                        placeholder="Rohit S Warrier"
+                        onChange={(e) => setClubHead(e.target.value)}
                         required
-                        onChange={(e) => setTagName(e.target.value)}
                     />
                 </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="godName">God Name</Label>
+                    <Input
+                        type="text"
+                        id="godName"
+                        value={godName}
+                        placeholder="Athena"
+                        onChange={(e) => setGodName(e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="grid gap-2">
+                    <Label htmlFor="imageUrl">Club Logo Image URL</Label>
+                    <Input
+                        type="url"
+                        id="imageUrl"
+                        value={imageUrl}
+                        placeholder="https://example.com/image.jpg"
+                        onChange={(e) => setImageUrl(e.target.value)}
+                        required
+                    />
+                </div>
+
                 <Button type="submit" className="w-full">
                     {loading ? (
                         <Loader2 className="animate-spin" />

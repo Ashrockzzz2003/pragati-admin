@@ -66,7 +66,7 @@ export default function Page() {
                 Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
             },
             body: JSON.stringify({
-                clubAbbrevation: "NIL",
+                clubAbbrevation: clubName.substring(0, 9).toUpperCase(),
                 clubName: clubName,
                 imageUrl: imageUrl,
                 clubHead: clubHead,
@@ -143,18 +143,18 @@ export default function Page() {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>Tags</BreadcrumbPage>
+                                    <BreadcrumbPage>Clubs</BreadcrumbPage>
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>New Tag</BreadcrumbPage>
+                                    <BreadcrumbPage>New Club</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
                 </header>
 
-                <h1 className="text-2xl font-semibold mx-4">Create New Tag</h1>
+                <h1 className="text-2xl font-semibold mx-4">Create New Club</h1>
                 <div className="bg-muted/50 m-4 p-4 rounded-xl flex flex-col gap-4">
                     {/* ShadCN Input and Button */}
                     <form
