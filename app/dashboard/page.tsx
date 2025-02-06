@@ -20,6 +20,7 @@ import {
 import { api } from "@/lib/api";
 import { generateNavItems } from "@/lib/nav-manager";
 import { Binoculars, PlusCircle } from "lucide-react";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import secureLocalStorage from "react-secure-storage";
@@ -63,6 +64,7 @@ export default function Page() {
                         setProgress(80);
                         res.json().then((data) => {
                             setEvents(data.DATA);
+                            console.table(data.DATA);
                             setProgress(100);
                         });
                         break;
@@ -136,29 +138,58 @@ export default function Page() {
 
                 <div className="flex flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Events</h1>
-                    <div className="flex flex-col gap-4">
-                        {/* TODO: Display all events with filters. */}
-                        {events.length === 0 && (
-                            <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4">
-                                <Binoculars className="w-128 h-128 my-2" />
-                                <p className="text-lg font-semibold text-foreground">
-                                    No events found
-                                </p>
-                                <p className="text-sm text-card-foreground">
-                                    Create a new event to get started
-                                </p>
-                                <hr className="border-t border-muted w-1/2 my-8" />
-                                <Button
-                                    onClick={() =>
-                                        router.push("/dashboard/new")
-                                    }
+                    <div className="flex flex-wrap gap-4">
+                        {events.map(
+                            (ev: {
+                                eventName: string;
+                                eventImageUrl: string;
+                            }) => (
+                                <div
+                                    key={ev.eventName}
+                                    className="flex flex-col gap-4 p-1.5 bg-secondary/80 rounded-2xl shadow-sm hover:bg-secondary transition-colors duration-200 cursor-pointer border border-muted w-full md:w-fit"
                                 >
-                                    <PlusCircle className="w-128 h-128" />{" "}
-                                    Create a new event
-                                </Button>
-                            </div>
+                                    <div className="flex gap-2 flex-col items-center">
+                                        <Image
+                                            src={ev.eventImageUrl}
+                                            alt={ev.eventName}
+                                            height={400}
+                                            width={100}
+                                            className="w-72 h-72 rounded-2xl object-cover border border-muted"
+                                        />
+                                        <div className="flex flex-col">
+                                            <h2 className="text-lg font-semibold text-foreground">
+                                                {ev.eventName}
+                                            </h2>
+                                        </div>
+                                    </div>
+                                    <Button
+                                        variant="default"
+                                        className="w-full text-center"
+                                    >
+                                        View Event Details
+                                    </Button>
+                                </div>
+                            ),
                         )}
                     </div>
+                    {events.length === 0 && (
+                        <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4">
+                            <Binoculars className="w-128 h-128 my-2" />
+                            <p className="text-lg font-semibold text-foreground">
+                                No events found
+                            </p>
+                            <p className="text-sm text-card-foreground">
+                                Create a new event to get started
+                            </p>
+                            <hr className="border-t border-muted w-1/2 my-8" />
+                            <Button
+                                onClick={() => router.push("/dashboard/new")}
+                            >
+                                <PlusCircle className="w-128 h-128" /> Create a
+                                new event
+                            </Button>
+                        </div>
+                    )}
                 </div>
             </SidebarInset>
         </SidebarProvider>
