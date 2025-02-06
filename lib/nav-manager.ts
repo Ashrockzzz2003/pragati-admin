@@ -98,6 +98,21 @@ const navItems = [
             },
         ],
     },
+    {
+        title: "Event Organizers",
+        url: "/dashboard/orgs",
+        icon: SquareTerminal,
+        items: [
+            {
+                title: "View Organizers",
+                url: "/dashboard/orgs",
+            },
+            {
+                title: "New Organizer",
+                url: "/dashboard/orgs/new",
+            },
+        ],
+    },
 ];
 
 export function generateNavItems(itemUrl: string, subItemUrl: string) {

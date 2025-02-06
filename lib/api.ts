@@ -4,4 +4,5 @@ export const api = {
     LOGIN_URL: `${BASE_URL}/auth/login`,
     TAGS_URL: `${BASE_URL}/tag`,
     CLUBS_URL: `${BASE_URL}/club`,
+    ORGS_URL: `${BASE_URL}/org`,
 };
