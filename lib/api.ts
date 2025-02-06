@@ -5,4 +5,6 @@ export const api = {
     TAGS_URL: `${BASE_URL}/tag`,
     CLUBS_URL: `${BASE_URL}/club`,
     ORGS_URL: `${BASE_URL}/org`,
+    EVENTS_URL: `${BASE_URL}/event`,
+    ALL_EVENTS_URL: `${BASE_URL}/event/all`,
 };

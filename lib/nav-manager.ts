@@ -19,7 +19,7 @@ const navItems = [
             },
             {
                 title: "New Event",
-                url: "/dashboard/event/new",
+                url: "/dashboard/new",
             },
         ],
     },
