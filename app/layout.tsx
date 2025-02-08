@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import localFont from "next/font/local";
 import "./globals.css";
+import { Suspense } from "react";
 
 const gilroy = localFont({
     src: [
@@ -129,7 +130,7 @@ export default function RootLayout({
                     enableSystem
                     disableTransitionOnChange
                 >
-                    {children}
+                    <Suspense>{children}</Suspense>
                 </ThemeProvider>
             </body>
         </html>

@@ -92,10 +92,6 @@ const navItems = [
                 title: "New Club",
                 url: "/dashboard/clubs/new",
             },
-            {
-                title: "Club-Wise Events",
-                url: "/dashboard/clubs/events",
-            },
         ],
     },
     {

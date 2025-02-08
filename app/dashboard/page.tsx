@@ -19,7 +19,7 @@ import {
 } from "@/components/ui/sidebar";
 import { api } from "@/lib/api";
 import { generateNavItems } from "@/lib/nav-manager";
-import { Binoculars, PlusCircle } from "lucide-react";
+import { Binoculars, Edit3, Notebook, PlusCircle } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -141,12 +141,13 @@ export default function Page() {
                     <div className="flex flex-wrap gap-4">
                         {events.map(
                             (ev: {
+                                eventID: number;
                                 eventName: string;
                                 eventImageUrl: string;
                             }) => (
                                 <div
                                     key={ev.eventName}
-                                    className="flex flex-col gap-4 p-1.5 bg-secondary/80 rounded-2xl shadow-sm hover:bg-secondary transition-colors duration-200 cursor-pointer border border-muted w-full md:w-fit"
+                                    className="flex flex-col gap-4 p-1.5 bg-secondary/40 rounded-2xl shadow-sm transition-colors duration-200 cursor-pointer border border-muted w-full md:w-fit"
                                 >
                                     <div className="flex gap-2 flex-col items-center">
                                         <Image
@@ -154,7 +155,7 @@ export default function Page() {
                                             alt={ev.eventName}
                                             height={400}
                                             width={100}
-                                            className="w-72 h-72 rounded-2xl object-cover border border-muted"
+                                            className="w-full h-full rounded-2xl object-cover border border-muted"
                                         />
                                         <div className="flex flex-col">
                                             <h2 className="text-lg font-semibold text-foreground">
@@ -162,12 +163,32 @@ export default function Page() {
                                             </h2>
                                         </div>
                                     </div>
-                                    <Button
-                                        variant="default"
-                                        className="w-full text-center"
-                                    >
-                                        View Event Details
-                                    </Button>
+                                    <div className="flex flex-row gap-2 justify-center">
+                                        <Button
+                                            variant="secondary"
+                                            className="w-full text-center"
+                                            onClick={() => {
+                                                router.push(
+                                                    `/dashboard/events/edit?id=${ev.eventID}`,
+                                                );
+                                            }}
+                                        >
+                                            <Notebook className="w-4 h-4" />
+                                            Event Details
+                                        </Button>
+                                        <Button
+                                            variant="default"
+                                            className="w-fit text-center"
+                                            onClick={() => {
+                                                router.push(
+                                                    `/dashboard/events/edit?id=${ev.eventID}`,
+                                                );
+                                            }}
+                                        >
+                                            <Edit3 className="w-4 h-4" />
+                                            Edit Event
+                                        </Button>
+                                    </div>
                                 </div>
                             ),
                         )}
