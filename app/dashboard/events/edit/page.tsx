@@ -44,7 +44,8 @@ export default function Page() {
     const [eventFee, setEventFee] = useState("");
     const [godName, setGodName] = useState("");
     const [eventDescription, setEventDescription] = useState("");
-    const [eventDescSmall, setEventDescSmall] = useState("");
+    const [venue, setVenue] = useState("");
+    const [time, setTime] = useState("");
     const [isGroup, setIsGroup] = useState(false);
     const [maxTeamSize, setMaxTeamSize] = useState("1");
     const [minTeamSize, setMinTeamSize] = useState("1");
@@ -80,13 +81,7 @@ export default function Page() {
                 email: _user.userEmail,
                 avatar: "https://gravatar.com/avatar/dd55aeae8806246ac1d0ab0c6baa34f5?&d=robohash&r=x",
             });
-            if (
-                orgData.length > 0 &&
-                tagData.length > 0 &&
-                searchParams.get("id")
-            ) {
-                setProgress(100);
-            }
+            setProgress(100);
         } else {
             router.replace("/");
         }
@@ -107,7 +102,8 @@ export default function Page() {
                             setEventFee(data.DATA[0].eventFee.toString());
                             setGodName(data.DATA[0].godName);
                             setEventDescription(data.DATA[0].eventDescription);
-                            setEventDescSmall(data.DATA[0].eventDescSmall);
+                            setVenue(data.DATA[0].venue);
+                            setTime(data.DATA[0].time);
                             setIsGroup(data.DATA[0].isGroup.toString() === "1");
                             setMaxTeamSize(data.DATA[0].maxTeamSize.toString());
                             setMinTeamSize(data.DATA[0].minTeamSize.toString());
@@ -137,7 +133,7 @@ export default function Page() {
                                 ),
                             );
                             setClubID(data.DATA[0].clubID.toString());
-                            setProgress(99);
+                            setProgress(100);
                         });
                         break;
                     case 400:
@@ -190,7 +186,7 @@ export default function Page() {
                                 },
                             );
                             setOrgData(_orgData);
-                            setProgress(99);
+                            setProgress(100);
                         });
                         break;
                     case 400:
@@ -240,7 +236,7 @@ export default function Page() {
                                 },
                             );
                             setTagData(_tagData);
-                            setProgress(99);
+                            setProgress(100);
                         });
                         break;
                     case 400:
@@ -293,7 +289,7 @@ export default function Page() {
                                 },
                             );
                             setClubData(_clubData);
-                            setProgress(99);
+                            setProgress(100);
                         });
                         break;
                     case 400:
@@ -339,7 +335,8 @@ export default function Page() {
                 eventFee: parseInt(eventFee),
                 godName,
                 eventDescription,
-                eventDescSmall,
+                venue: venue,
+                time,
                 isGroup,
                 maxTeamSize: parseInt(maxTeamSize),
                 minTeamSize: parseInt(minTeamSize),
@@ -570,6 +567,24 @@ export default function Page() {
                                 htmlFor="eventDescription"
                                 className="text-lg font-semibold"
                             >
+                                Timings of the event
+                            </Label>
+                            <Textarea
+                                className="min-h-[88px] border focus:border-primary-focus"
+                                placeholder={
+                                    "Round 1: 10.30 AM - 3.30 PM\nRound 2: 4.30 PM - 8.30 PM"
+                                }
+                                value={time}
+                                onChange={(e) => setTime(e.target.value)}
+                                required
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label
+                                htmlFor="eventDescription"
+                                className="text-lg font-semibold"
+                            >
                                 About the event
                             </Label>
                             <Textarea
@@ -588,16 +603,16 @@ export default function Page() {
                                 htmlFor="eventDescSmall"
                                 className="text-lg font-semibold"
                             >
-                                Rules
+                                Venue
                             </Label>
-                            <Textarea
-                                className="min-h-[108px] border focus:border-primary-focus"
-                                placeholder="Enter rules"
-                                value={eventDescSmall}
-                                onChange={(e) =>
-                                    setEventDescSmall(e.target.value)
-                                }
+                            <Input
+                                type="text"
+                                id="venue"
+                                value={venue}
+                                placeholder="ASB C101"
+                                onChange={(e) => setVenue(e.target.value)}
                                 required
+                                className="border focus:border-primary-focus"
                             />
                         </div>
 

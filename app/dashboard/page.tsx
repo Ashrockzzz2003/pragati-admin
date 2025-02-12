@@ -204,7 +204,9 @@ export default function Page() {
                             </p>
                             <hr className="border-t border-muted w-1/2 my-8" />
                             <Button
-                                onClick={() => router.push("/dashboard/new")}
+                                onClick={() =>
+                                    router.push("/dashboard/events/new")
+                                }
                             >
                                 <PlusCircle className="w-128 h-128" /> Create a
                                 new event
