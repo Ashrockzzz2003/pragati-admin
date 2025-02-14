@@ -16,6 +16,7 @@ import { useState } from "react";
 import { api } from "@/lib/api";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
+import { hashPassword } from "@/lib/hash";
 
 export function LoginForm({
     className,
@@ -42,7 +43,7 @@ export function LoginForm({
                 },
                 body: JSON.stringify({
                     userEmail: email,
-                    userPassword: password,
+                    userPassword: hashPassword(password),
                 }),
             });
 
