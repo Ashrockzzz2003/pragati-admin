@@ -147,15 +147,15 @@ export default function Page() {
                             }) => (
                                 <div
                                     key={ev.eventName}
-                                    className="flex flex-col gap-4 p-1.5 bg-secondary/40 rounded-2xl shadow-sm transition-colors duration-200 cursor-pointer border border-muted w-full md:w-fit"
+                                    className="flex flex-col gap-4 p-1.5 bg-secondary/40 rounded-2xl shadow-sm transition-colors duration-200 cursor-pointer border border-muted h-fit w-full md:w-fit"
                                 >
                                     <div className="flex gap-2 flex-col items-center">
                                         <Image
                                             src={ev.eventImageUrl}
                                             alt={ev.eventName}
-                                            height={400}
+                                            height={100}
                                             width={100}
-                                            className="w-full h-full rounded-2xl object-cover border border-muted"
+                                            className="w-full h-fit rounded-2xl object-cover border border-muted"
                                         />
                                         <div className="flex flex-col">
                                             <h2 className="text-lg font-semibold text-foreground">

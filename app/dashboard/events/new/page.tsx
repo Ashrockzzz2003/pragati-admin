@@ -52,6 +52,12 @@ export default function Page() {
     const [eventDate, setEventDate] = useState("1");
     const [maxRegistrations, setMaxRegistrations] = useState("10");
     const [isPerHeadFee, setIsPerHeadFee] = useState(false);
+    const [fisrtPrizeMoney, setFirstPrizeMoney] = useState("");
+    const [secondPrizeMoney, setSecondPrizeMoney] = useState("");
+    const [thirdPrizeMoney, setThirdPrizeMoney] = useState("");
+    const [fourthPrizeMoney, setFourthPrizeMoney] = useState("");
+    const [fifthPrizeMoney, setFifthPrizeMoney] = useState("");
+    const [rules, setRules] = useState("");
 
     const [orgData, setOrgData] = useState([]);
     const [tagData, setTagData] = useState([]);
@@ -267,6 +273,12 @@ export default function Page() {
                 organizerIDs: organizerIDs.map((id) => parseInt(id)),
                 tagIDs: tagIDs.map((id) => parseInt(id)),
                 clubID: parseInt(clubID),
+                firstPrice: fisrtPrizeMoney === "" ? null : fisrtPrizeMoney,
+                secondPrice: secondPrizeMoney === "" ? null : secondPrizeMoney,
+                thirdPrice: thirdPrizeMoney === "" ? null : thirdPrizeMoney,
+                fourthPrice: fourthPrizeMoney === "" ? null : fourthPrizeMoney,
+                fifthPrice: fifthPrizeMoney === "" ? null : fifthPrizeMoney,
+                rules,
             }),
         })
             .then((res) => {
@@ -524,6 +536,26 @@ export default function Page() {
 
                         <div className="grid gap-2">
                             <Label
+                                htmlFor="rules"
+                                className="text-lg font-semibold"
+                            >
+                                Event Rules
+                            </Label>
+                            <p className="text-xs text-card-foreground/70">
+                                Enter the rules of the event. One rule per line.
+                                Not mandatory. Enter this only if there are
+                                rules for the event.
+                            </p>
+                            <Textarea
+                                className="min-h-[196px] border focus:border-primary-focus"
+                                placeholder="Enter the rules of the event"
+                                value={rules}
+                                onChange={(e) => setRules(e.target.value)}
+                            />
+                        </div>
+
+                        <div className="grid gap-2">
+                            <Label
                                 htmlFor="eventDescSmall"
                                 className="text-lg font-semibold"
                             >
@@ -582,6 +614,121 @@ export default function Page() {
                                     </p>
                                 </label>
                             </div>
+                        </div>
+
+                        <div className="grid">
+                            <Label
+                                htmlFor="firstPrizeMoney"
+                                className="text-lg font-semibold"
+                            >
+                                First Prize Reward
+                            </Label>
+                            <p className="text-xs text-card-foreground/70">
+                                Not mandatory. Enter this only if there is a
+                                first prize reward.
+                            </p>
+                            <Input
+                                type="text"
+                                id="firstPrizeMoney"
+                                value={fisrtPrizeMoney}
+                                placeholder="10,000"
+                                onChange={(e) =>
+                                    setFirstPrizeMoney(e.target.value)
+                                }
+                                className="border focus:border-primary-focus mt-2"
+                            />
+                        </div>
+
+                        <div className="grid">
+                            <Label
+                                htmlFor="secondPrizeMoney"
+                                className="text-lg font-semibold"
+                            >
+                                Second Prize Reward
+                            </Label>
+                            <p className="text-xs text-card-foreground/70">
+                                Not mandatory. Enter this only if there is a
+                                second prize reward.
+                            </p>
+                            <Input
+                                type="text"
+                                id="secondPrizeMoney"
+                                value={secondPrizeMoney}
+                                placeholder="7,500"
+                                onChange={(e) =>
+                                    setSecondPrizeMoney(e.target.value)
+                                }
+                                className="border focus:border-primary-focus mt-2"
+                            />
+                        </div>
+
+                        <div className="grid">
+                            <Label
+                                htmlFor="thirdPrizeMoney"
+                                className="text-lg font-semibold"
+                            >
+                                Third Prize Reward
+                            </Label>
+                            <p className="text-xs text-card-foreground/70">
+                                Not mandatory. Enter this only if there is a
+                                third prize reward.
+                            </p>
+                            <Input
+                                type="text"
+                                id="thirdPrizeMoney"
+                                value={thirdPrizeMoney}
+                                placeholder="5,000"
+                                onChange={(e) =>
+                                    setThirdPrizeMoney(e.target.value)
+                                }
+                                className="border focus:border-primary-focus mt-2"
+                            />
+                        </div>
+
+                        <div className="grid">
+                            <Label
+                                htmlFor="fourthPrizeMoney"
+                                className="text-lg font-semibold"
+                            >
+                                Fourth Prize Reward
+                            </Label>
+                            <p className="text-xs text-card-foreground/70">
+                                Not mandatory. Enter this only if there is a
+                                fourth prize reward.
+                            </p>
+                            <Input
+                                type="text"
+                                id="fourthPrizeMoney"
+                                value={fourthPrizeMoney}
+                                placeholder="3,000"
+                                onChange={(e) =>
+                                    setFourthPrizeMoney(e.target.value)
+                                }
+                                className="border focus:border-primary-focus mt-2"
+                            />
+                        </div>
+
+                        <div className="grid">
+                            <Label
+                                htmlFor="fifthPrizeMoney"
+                                className="text-lg font-semibold"
+                            >
+                                Fifth Prize Reward
+                            </Label>
+                            <p className="text-xs text-card-foreground/70">
+                                Not mandatory. Enter this only if there is a
+                                fifth prize reward.
+                            </p>
+                            <Input
+                                type="text"
+                                id="fifthPrizeMoney"
+                                value={fifthPrizeMoney}
+                                placeholder="1,000"
+                                onChange={(e) =>
+                                    setFifthPrizeMoney(e.target.value)
+                                }
+                                className="border focus:border-primary-focus mt-2"
+                            />
                         </div>
 
                         {isGroup && (
