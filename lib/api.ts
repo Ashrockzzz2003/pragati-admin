@@ -7,5 +7,6 @@ export const api = {
     CLUBS_URL: `${BASE_URL}/club`,
     ORGS_URL: `${BASE_URL}/org`,
     EVENTS_URL: `${BASE_URL}/event`,
+    ALERTS_URL: `${BASE_URL}/notification`,
     ALL_EVENTS_URL: `${BASE_URL}/event/all`,
 };
