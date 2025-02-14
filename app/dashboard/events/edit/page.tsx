@@ -401,7 +401,13 @@ export default function Page() {
             });
     };
 
-    return user.name === "" || user.email === "" || progress < 100 ? (
+    return user.name === "" ||
+        user.email === "" ||
+        progress < 100 ||
+        orgData.length === 0 ||
+        tagData.length === 0 ||
+        clubData.length === 0 ||
+        organizerIDs.length === 0 ? (
         <div className="flex items-center justify-center h-screen w-[50%] ml-auto mr-auto">
             <Progress value={progress} />
         </div>
