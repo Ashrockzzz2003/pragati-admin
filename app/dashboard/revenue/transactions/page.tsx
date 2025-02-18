@@ -19,7 +19,6 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
-import RevenuePage from "@/components/revenue/revenue";
 import TransactionsTable from "@/components/revenue/transactions-table";
 
 
