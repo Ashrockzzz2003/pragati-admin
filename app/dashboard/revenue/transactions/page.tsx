@@ -1,168 +1,110 @@
-"use client"
-
-import { useState, useMemo } from "react"
+"use client";
+import { useEffect, useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import secureLocalStorage from "react-secure-storage";
+import { Progress } from "@/components/ui/progress";
 import {
-  Table,
-  TableBody,
-  TableCaption,
-  TableCell,
-  TableFooter,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table"
-import { Button } from "@/components/ui/button"
-import { ArrowUpDown } from "lucide-react"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+    SidebarInset,
+    SidebarProvider,
+    SidebarTrigger,
+} from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/app-sidebar";
+import { Separator } from "@/components/ui/separator";
+import {
+    Breadcrumb,
+    BreadcrumbItem,
+    BreadcrumbLink,
+    BreadcrumbList,
+    BreadcrumbPage,
+    BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
+import { generateNavItems } from "@/lib/nav-manager";
+import RevenuePage from "@/components/revenue/revenue";
+import TransactionsTable from "@/components/revenue/transactions-table";
 
-const invoices = [
-  {
-    invoice: "INV001",
-    paymentStatus: "Paid",
-    totalAmount: "$250.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV002",
-    paymentStatus: "Pending",
-    totalAmount: "$150.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV003",
-    paymentStatus: "Unpaid",
-    totalAmount: "$350.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV004",
-    paymentStatus: "Paid",
-    totalAmount: "$450.00",
-    paymentMethod: "Credit Card",
-  },
-  {
-    invoice: "INV005",
-    paymentStatus: "Paid",
-    totalAmount: "$550.00",
-    paymentMethod: "PayPal",
-  },
-  {
-    invoice: "INV006",
-    paymentStatus: "Pending",
-    totalAmount: "$200.00",
-    paymentMethod: "Bank Transfer",
-  },
-  {
-    invoice: "INV007",
-    paymentStatus: "Unpaid",
-    totalAmount: "$300.00",
-    paymentMethod: "Credit Card",
-  },
-]
 
-type SortKey = keyof (typeof invoices)[0]
+const TransactionsPage = () => {
+    const [user, setUser] = useState({
+        name: "",
+        email: "",
+        avatar: "",
+    });
+    const [progress, setProgress] = useState<number>(0);
+    const router = useRouter();
 
-const Transactions = () => {
-  const [methodFilter, setMethodFilter] = useState<string | "all">("all")
-  const [sortKey, setSortKey] = useState<SortKey>("invoice")
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc")
+    useEffect(() => {
+        const _user =
+            JSON.parse(secureLocalStorage.getItem("u") as string) ?? {};
+        setProgress(50);
 
-  const uniqueMethods = useMemo(() => {
-    return Array.from(new Set(invoices.map((invoice) => invoice.paymentMethod)))
-  }, [])
+        if (_user.userName && _user.userEmail) {
+            setUser({
+                name: _user.userName,
+                email: _user.userEmail,
+                avatar: "https://gravatar.com/avatar/dd55aeae8806246ac1d0ab0c6baa34f5?&d=robohash&r=x",
+            });
+            setProgress(100);
+        } else {
+            router.replace("/");
+            return;
+        }
 
-  const filteredAndSortedInvoices = useMemo(() => {
-    return invoices
-      .filter((invoice) => (methodFilter!="all" ? invoice.paymentMethod === methodFilter : true))
-      .sort((a, b) => {
-        if (a[sortKey] < b[sortKey]) return sortOrder === "asc" ? -1 : 1
-        if (a[sortKey] > b[sortKey]) return sortOrder === "asc" ? 1 : -1
-        return 0
-      })
-  }, [methodFilter, sortKey, sortOrder])
+        
+        
+    }, [router]);
 
-  const totalAmount = useMemo(() => {
-    return filteredAndSortedInvoices
-      .reduce((sum, invoice) => sum + Number.parseFloat(invoice.totalAmount.slice(1)), 0)
-      .toFixed(2)
-  }, [filteredAndSortedInvoices])
+    return user?.name === "" || user?.email === "" || progress < 100 ? (
+        <div className="flex items-center justify-center h-screen w-[50%] ml-auto mr-auto">
+            <Progress value={progress} />
+        </div>
+    ) : (
+        <SidebarProvider>
+            <AppSidebar
+                user={user}
+                navItems={generateNavItems(
+                    "/dashboard/revenue/transactions",
+                    "/dashboard/revenue/transactions",
+                )}
+            />
+            <SidebarInset>
+                <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+                    <div className="flex items-center gap-2 px-4">
+                        <SidebarTrigger className="-ml-1" />
+                        <Separator
+                            orientation="vertical"
+                            className="mr-2 h-4"
+                        />
+                        <Breadcrumb>
+                            <BreadcrumbList>
+                                <BreadcrumbItem>
+                                    <BreadcrumbLink href="#">
+                                        Pragati 2025
+                                    </BreadcrumbLink>
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator />
+                                <BreadcrumbItem>
+                                    <BreadcrumbPage>
+                                        Admin Dashboard
+                                    </BreadcrumbPage>
+                                </BreadcrumbItem>
+                                <BreadcrumbSeparator />
+                                <BreadcrumbItem>
+                                    <BreadcrumbPage>
+                                        Transactions
+                                    </BreadcrumbPage>
+                                </BreadcrumbItem>
+                            </BreadcrumbList>
+                        </Breadcrumb>
+                    </div>
+                </header>
+                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                    <h1 className="text-2xl font-semibold">Transactions</h1>
+                    <TransactionsTable/>
+                </div>
+                
+            </SidebarInset>
+        </SidebarProvider>
+    );
+};
 
-  const handleSort = (key: SortKey) => {
-    if (key === sortKey) {
-      setSortOrder(sortOrder === "asc" ? "desc" : "asc")
-    } else {
-      setSortKey(key)
-      setSortOrder("asc")
-    }
-  }
-
-  return (
-    <div className="space-y-4">
-      <div className="flex items-center space-x-2">
-        <span>Filter by Method:</span>
-        <Select onValueChange={(value) => setMethodFilter(value)} value={methodFilter}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a method" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Methods</SelectItem>
-            {uniqueMethods.map((method) => (
-              <SelectItem key={method} value={method}>
-                {method}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-      </div>
-      <Table>
-        <TableCaption>A list of your recent invoices.</TableCaption>
-        <TableHeader>
-          <TableRow>
-            <TableHead className="w-[100px]">
-              <Button variant="ghost" onClick={() => handleSort("invoice")}>
-                Invoice
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-            </TableHead>
-            <TableHead>
-              <Button variant="ghost" onClick={() => handleSort("paymentStatus")}>
-                Status
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-            </TableHead>
-            <TableHead>
-              <Button variant="ghost" onClick={() => handleSort("paymentMethod")}>
-                Method
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-            </TableHead>
-            <TableHead className="text-right">
-              <Button variant="ghost" onClick={() => handleSort("totalAmount")}>
-                Amount
-                <ArrowUpDown className="ml-2 h-4 w-4" />
-              </Button>
-            </TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {filteredAndSortedInvoices.map((invoice) => (
-            <TableRow key={invoice.invoice}>
-              <TableCell className="font-medium">{invoice.invoice}</TableCell>
-              <TableCell>{invoice.paymentStatus}</TableCell>
-              <TableCell>{invoice.paymentMethod}</TableCell>
-              <TableCell className="text-right">{invoice.totalAmount}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-        <TableFooter>
-          <TableRow>
-            <TableCell colSpan={3}>Total</TableCell>
-            <TableCell className="text-right">${totalAmount}</TableCell>
-          </TableRow>
-        </TableFooter>
-      </Table>
-    </div>
-  )
-}
-
-export default Transactions; 
+export default TransactionsPage;

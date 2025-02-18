@@ -30,11 +30,11 @@ const navItems = [
         items: [
             {
                 title: "Search",
-                url: "/dashboard/participants",
+                url: "/dashboard/participants/search",
             },
             {
                 title: "Event-Wise",
-                url: "/dashboard/participants/event",
+                url: "/dashboard/participants/",
             },
         ],
     },
@@ -61,6 +61,10 @@ const navItems = [
             {
                 title: "Monitor",
                 url: "/dashboard/revenue",
+            },
+            {
+                title: "View Transactions",
+                url: "/dashboard/revenue/transactions",
             },
         ],
     },
