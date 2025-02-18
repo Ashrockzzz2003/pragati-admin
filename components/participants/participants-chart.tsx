@@ -16,6 +16,7 @@ import {
   CardTitle,
 } from "@/components/ui/card"
 import { ChartConfig, ChartContainer } from "@/components/ui/chart"
+import { Button } from "../ui/button"
 const chartData = [
   { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
 ]
@@ -28,6 +29,21 @@ const chartConfig = {
     color: "hsl(var(--chart-2))",
   },
 } satisfies ChartConfig
+
+const events = [
+  { id: "event1", name: "Hackathon", current: 50, max: 100 },
+  { id: "event2", name: "AI Workshop", current: 30, max: 50 },
+  { id: "event3", name: "Tech Talk", current: 80, max: 100 },
+  { id: "event4", name: "Startup Pitch Fest", current: 25, max: 50 },
+  { id: "event5", name: "Entrepreneurship Summit", current: 40, max: 75 },
+  { id: "event6", name: "Marketing Masterclass", current: 60, max: 80 },
+  { id: "event7", name: "Product Management Bootcamp", current: 35, max: 60 },
+  { id: "event8", name: "Business Analytics Workshop", current: 45, max: 90 },
+  { id: "event9", name: "Investment & Finance Forum", current: 50, max: 100 },
+  { id: "event10", name: "Leadership & Strategy Conference", current: 20, max: 50 },
+  { id: "event11", name: "Sales & Negotiation Training", current: 30, max: 70 },
+];
+
 
 const ParticipantsChart = () => {
   return (
@@ -92,14 +108,32 @@ const ParticipantsChart = () => {
         </ChartContainer>
       </CardContent>
       <CardFooter className="flex-col gap-2 text-sm">
-        <div className="flex items-center gap-2 font-medium leading-none">
-          Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-        </div>
         <div className="leading-none text-muted-foreground">
-          Showing total visitors for the last 6 months
+          Showing total participants registered for events
         </div>
       </CardFooter>
     </Card>
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
+            {events.map((event) => (
+                <Card 
+                    key={event.id} 
+                    className="cursor-pointer hover:shadow-lg transition-shadow"
+                    // onClick={() => router.push(`/participants/${event.id}`)}
+                >
+                    <CardHeader className="text-center">
+                        <CardTitle>{event.name}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="flex flex-col items-center">
+                        <p className="text-4xl font-bold">{event.current}</p>
+                        <p className="text-sm text-gray-500">/ {event.max} participants</p>
+                    </CardContent>
+                    <CardContent>
+                        <Button className="w-full whitespace-normal leading-3 break-words">Click to view participants</Button>
+                    </CardContent>
+                </Card>
+            ))}
+        </div>
+
     </div>
   )
 }
