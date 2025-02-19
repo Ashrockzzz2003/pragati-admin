@@ -29,8 +29,8 @@ const TransactionsPage = () => {
         avatar: "",
     });
     const [progress, setProgress] = useState<number>(0);
-    const [transactions, setTransactions] = useState([])
-    const [events, setEvents] = useState([])
+    const [transactions, setTransactions] = useState([]);
+    const [events, setEvents] = useState([]);
     const router = useRouter();
 
     useEffect(() => {
@@ -51,72 +51,71 @@ const TransactionsPage = () => {
         }
 
         fetch(api.ALL_TRANSACTIONS_URL, {
-                    method: "GET",
-                    headers: {
-                        "Content-Type": "application/json",
-                        Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
-                    },
-                })
-                    .then((res) => {
-                        switch (res.status) {
-                            case 200:
-                                setProgress(70);
-                                res.json().then((data) => {
-                                    setTransactions(data.DATA);
-                                    setProgress(80);
-                                });
-                                break;
-                            case 400:
-                                res.json().then(({ MESSAGE }) => {
-                                    alert(MESSAGE);
-                                });
-                                break;
-                            case 500:
-                                alert(
-                                    "We are facing some issues at the moment. We are working on it. Please try again later.",
-                                );
-                                break;
-                            default:
-                                alert(
-                                    "Something went wrong. Please refresh the page and try again later.",
-                                );
-                                break;
-                        }
-                    })
-                    .catch((err) => {
-                        console.error(err);
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
+            },
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(70);
+                        res.json().then((data) => {
+                            setTransactions(data.DATA);
+                            setProgress(80);
+                        });
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
                         alert(
                             "Something went wrong. Please refresh the page and try again later.",
                         );
-                    })
-                    .finally(() => {
-                        setProgress(80);
+                        break;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(80);
+            });
+
+        fetch(api.ALL_EVENTS_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
+            },
+        })
+            .then((eventRes) => {
+                if (eventRes.status === 200) {
+                    eventRes.json().then((eventData) => {
+                        setEvents(eventData.DATA);
+                        setProgress(100);
                     });
-
-                    fetch(api.ALL_EVENTS_URL, {
-                        method: "GET",
-                        headers: {
-                            "Content-Type": "application/json",
-                            Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
-                        },
-                    })
-                        .then((eventRes) => {
-                            if (eventRes.status === 200) {
-                                eventRes.json().then((eventData) => {
-                                    setEvents(eventData.DATA);
-                                    setProgress(100);
-                                });
-                            } else {
-                                alert("Failed to fetch event data.");
-                            }
-                        })
-                        .catch((err) => {
-                            console.error("Error fetching event data", err);
-                        })
-                        .finally(() => {
-                            setProgress(100);
-                        });;
-
+                } else {
+                    alert("Failed to fetch event data.");
+                }
+            })
+            .catch((err) => {
+                console.error("Error fetching event data", err);
+            })
+            .finally(() => {
+                setProgress(100);
+            });
     }, [router]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (
@@ -165,7 +164,7 @@ const TransactionsPage = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Transactions</h1>
-                    <TransactionsTable invoice={transactions} events={events}/>
+                    <TransactionsTable invoice={transactions} events={events} />
                 </div>
             </SidebarInset>
         </SidebarProvider>
