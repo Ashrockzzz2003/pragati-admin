@@ -129,7 +129,7 @@ export function LoginForm({
                                             Password
                                         </Label>
                                         <Link
-                                            href="#"
+                                            href="https://pragati.amrita.edu/resetPassword"
                                             className="ml-auto text-sm underline-offset-4 hover:underline"
                                         >
                                             Forgot your password?

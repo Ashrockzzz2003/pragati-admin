@@ -9,4 +9,6 @@ export const api = {
     EVENTS_URL: `${BASE_URL}/event`,
     ALERTS_URL: `${BASE_URL}/notification`,
     ALL_EVENTS_URL: `${BASE_URL}/event/all`,
+    REVENUE_URL: `${BASE_URL}/admin/amountGenerated`,
+    ALL_TRANSACTIONS_URL: `${BASE_URL}/admin/transactions`,
 };
