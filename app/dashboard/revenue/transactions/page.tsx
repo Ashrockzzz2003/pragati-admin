@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { Progress } from "@/components/ui/progress";
@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
 import TransactionsTable from "@/components/revenue/transactions-table";
-
 
 const TransactionsPage = () => {
     const [user, setUser] = useState({
@@ -47,9 +46,6 @@ const TransactionsPage = () => {
             router.replace("/");
             return;
         }
-
-        
-        
     }, [router]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (
@@ -98,9 +94,8 @@ const TransactionsPage = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Transactions</h1>
-                    <TransactionsTable/>
+                    <TransactionsTable />
                 </div>
-                
             </SidebarInset>
         </SidebarProvider>
     );

@@ -51,7 +51,7 @@ const ParticipantsChart: React.FC<ParticipantsChartProps> = ({ events }) => {
             ? (totalRegistrations / totalMaxRegistrations) * 100
             : 0;
     const startAngle = 0;
-    const endAngle = (percentage/100)*360;
+    const endAngle = (percentage / 100) * 360;
     const chartData = [
         {
             participants: "Registered",

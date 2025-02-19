@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { Progress } from "@/components/ui/progress";
@@ -20,7 +20,6 @@ import {
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
 import RevenuePage from "@/components/revenue/revenue";
-
 
 const Revenue = () => {
     const [user, setUser] = useState({
@@ -47,9 +46,6 @@ const Revenue = () => {
             router.replace("/");
             return;
         }
-
-        
-        
     }, [router]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (
@@ -88,17 +84,15 @@ const Revenue = () => {
                                 </BreadcrumbItem>
                                 <BreadcrumbSeparator />
                                 <BreadcrumbItem>
-                                    <BreadcrumbPage>
-                                        Revenue
-                                    </BreadcrumbPage>
+                                    <BreadcrumbPage>Revenue</BreadcrumbPage>
                                 </BreadcrumbItem>
                             </BreadcrumbList>
                         </Breadcrumb>
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                <h1 className="text-2xl font-semibold">Revenue</h1>
-                <RevenuePage/>
+                    <h1 className="text-2xl font-semibold">Revenue</h1>
+                    <RevenuePage />
                 </div>
             </SidebarInset>
         </SidebarProvider>

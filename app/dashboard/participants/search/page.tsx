@@ -21,7 +21,6 @@ import {
 import { generateNavItems } from "@/lib/nav-manager";
 import ParticipantsTable from "@/components/participants/participants-table";
 
-
 const AllParticipants = () => {
     const [user, setUser] = useState({
         name: "",
@@ -47,9 +46,6 @@ const AllParticipants = () => {
             router.replace("/");
             return;
         }
-
-        
-        
     }, [router]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (
@@ -97,8 +93,11 @@ const AllParticipants = () => {
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-                <h1 className="text-2xl font-semibold"> All Participants</h1>
-                <ParticipantsTable/>
+                    <h1 className="text-2xl font-semibold">
+                        {" "}
+                        All Participants
+                    </h1>
+                    <ParticipantsTable />
                 </div>
             </SidebarInset>
         </SidebarProvider>

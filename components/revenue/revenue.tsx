@@ -1,11 +1,10 @@
 "use client";
-import { useState, useMemo } from "react";
+import { useMemo } from "react";
 import { Label, Pie, PieChart } from "recharts";
 import {
     Card,
     CardContent,
     CardDescription,
-    CardFooter,
     CardHeader,
     CardTitle,
 } from "@/components/ui/card";
@@ -15,7 +14,6 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@/components/ui/chart";
-import { Button } from "../ui/button";
 
 const chartData = [
     { event: "Management", visitors: 275, fill: "var(--color-mgmt)" },
@@ -47,7 +45,6 @@ const event_revenue = [
 ];
 
 const RevenuePage = () => {
-    const [revenue, setRevenue] = useState<number | null>(null);
     const totalVisitors = useMemo(() => {
         return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
     }, []);
@@ -129,7 +126,9 @@ const RevenuePage = () => {
                             <CardTitle>{rev.name}</CardTitle>
                         </CardHeader>
                         <CardContent className="flex flex-col items-center">
-                            <p className="text-4xl font-bold">₹ {rev.revenue}</p>
+                            <p className="text-4xl font-bold">
+                                ₹ {rev.revenue}
+                            </p>
                         </CardContent>
                     </Card>
                 ))}
