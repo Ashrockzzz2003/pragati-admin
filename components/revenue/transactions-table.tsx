@@ -26,29 +26,42 @@ type Transactions = {
     userName: string;
     userEmail: string;
     transactionStatus: string;
-    event: string;
     amount: number;
+    eventID: number;
+};
+
+type Events = {
+    eventID: number;
+    eventName: string;
 };
 
 interface Transactions_Table {
     invoice: Transactions[];
+    events: Events[];
 }
 
 type SortKey = keyof Transactions;
 
-const TransactionsTable: React.FC<Transactions_Table> = ({ invoice }) => {
+const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) => {
     const [eventFilter, setEventFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
     const [sortKey, setSortKey] = useState<SortKey>("txnID");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     const uniqueMethods = useMemo(() => {
-        return Array.from(new Set(invoice.map((inv) => inv.event)));
+        return Array.from(new Set(invoice.map((inv) => inv.eventID)));
     }, [invoice]);
+
+    const eventMap = useMemo(() => {
+        return events.reduce((acc, event) => {
+            acc[event.eventID] = event.eventName;
+            return acc;
+        }, {} as Record<number, string>);
+    }, [events]);
 
     const filteredAndSortedInvoices = useMemo(() => {
         const filtered = invoice
-            .filter((inv) => eventFilter === "all" || inv.event === eventFilter)
+            .filter((inv) => eventFilter === "all" || inv.eventID === Number(eventFilter))
             .filter(
                 (inv) =>
                     statusFilter === "all" ||
@@ -91,9 +104,9 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice }) => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectItem value="all">All Events</SelectItem>
-                            {uniqueMethods.map((method) => (
-                                <SelectItem key={method} value={method}>
-                                    {method}
+                            {uniqueMethods.map((eventID) => (
+                                <SelectItem key={eventID} value={String(eventID)}>
+                                    {eventMap[eventID]}
                                 </SelectItem>
                             ))}
                         </SelectContent>
@@ -152,7 +165,7 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice }) => {
                         <TableHead>
                             <Button
                                 variant="ghost"
-                                onClick={() => handleSort("event")}
+                                onClick={() => handleSort("eventID")}
                             >
                                 Event Name
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -186,7 +199,9 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice }) => {
                             </TableCell>
                             <TableCell>{inv.userName}</TableCell>
                             <TableCell>{inv.userEmail}</TableCell>
-                            <TableCell>Event Name</TableCell>
+                            <TableCell>
+                                {eventMap[inv.eventID] || "Unknown Event"}
+                            </TableCell>
                             <TableCell>
                                 <Badge
                                     variant={

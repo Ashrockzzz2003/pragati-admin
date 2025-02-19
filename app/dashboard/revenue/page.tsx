@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
 import RevenuePage from "@/components/revenue/revenue";
+import { api } from "@/lib/api";
 
 const Revenue = () => {
     const [user, setUser] = useState({
@@ -46,6 +47,48 @@ const Revenue = () => {
             router.replace("/");
             return;
         }
+        fetch(api.REVENUE_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
+            },
+        })
+            .then((res) => {
+                switch (res.status) {
+                    case 200:
+                        setProgress(80);
+                        res.json().then((data) => {
+                            console.log(data.DATA);
+                            setProgress(100);
+                        });
+                        break;
+                    case 400:
+                        res.json().then(({ MESSAGE }) => {
+                            alert(MESSAGE);
+                        });
+                        break;
+                    case 500:
+                        alert(
+                            "We are facing some issues at the moment. We are working on it. Please try again later.",
+                        );
+                        break;
+                    default:
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                        break;
+                }
+            })
+            .catch((err) => {
+                console.error(err);
+                alert(
+                    "Something went wrong. Please refresh the page and try again later.",
+                );
+            })
+            .finally(() => {
+                setProgress(100);
+            });
     }, [router]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (

@@ -30,12 +30,13 @@ const TransactionsPage = () => {
     });
     const [progress, setProgress] = useState<number>(0);
     const [transactions, setTransactions] = useState([])
+    const [events, setEvents] = useState([])
     const router = useRouter();
 
     useEffect(() => {
         const _user =
             JSON.parse(secureLocalStorage.getItem("u") as string) ?? {};
-        setProgress(50);
+        setProgress(30);
 
         if (_user.userName && _user.userEmail) {
             setUser({
@@ -43,7 +44,7 @@ const TransactionsPage = () => {
                 email: _user.userEmail,
                 avatar: "https://gravatar.com/avatar/dd55aeae8806246ac1d0ab0c6baa34f5?&d=robohash&r=x",
             });
-            setProgress(66);
+            setProgress(50);
         } else {
             router.replace("/");
             return;
@@ -59,11 +60,10 @@ const TransactionsPage = () => {
                     .then((res) => {
                         switch (res.status) {
                             case 200:
-                                setProgress(80);
+                                setProgress(70);
                                 res.json().then((data) => {
                                     setTransactions(data.DATA);
-                                    console.log(data.DATA);
-                                    setProgress(100);
+                                    setProgress(80);
                                 });
                                 break;
                             case 400:
@@ -90,8 +90,32 @@ const TransactionsPage = () => {
                         );
                     })
                     .finally(() => {
-                        setProgress(100);
+                        setProgress(80);
                     });
+
+                    fetch(api.ALL_EVENTS_URL, {
+                        method: "GET",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
+                        },
+                    })
+                        .then((eventRes) => {
+                            if (eventRes.status === 200) {
+                                eventRes.json().then((eventData) => {
+                                    setEvents(eventData.DATA);
+                                    setProgress(100);
+                                });
+                            } else {
+                                alert("Failed to fetch event data.");
+                            }
+                        })
+                        .catch((err) => {
+                            console.error("Error fetching event data", err);
+                        })
+                        .finally(() => {
+                            setProgress(100);
+                        });;
 
     }, [router]);
 
@@ -141,7 +165,7 @@ const TransactionsPage = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Transactions</h1>
-                    <TransactionsTable invoice={transactions}/>
+                    <TransactionsTable invoice={transactions} events={events}/>
                 </div>
             </SidebarInset>
         </SidebarProvider>
