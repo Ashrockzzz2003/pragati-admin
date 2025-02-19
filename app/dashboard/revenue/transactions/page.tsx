@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
 import TransactionsTable from "@/components/revenue/transactions-table";
+import { api } from "@/lib/api";
 
 const TransactionsPage = () => {
     const [user, setUser] = useState({
@@ -28,6 +29,7 @@ const TransactionsPage = () => {
         avatar: "",
     });
     const [progress, setProgress] = useState<number>(0);
+    const [transactions, setTransactions] = useState([])
     const router = useRouter();
 
     useEffect(() => {
@@ -41,11 +43,56 @@ const TransactionsPage = () => {
                 email: _user.userEmail,
                 avatar: "https://gravatar.com/avatar/dd55aeae8806246ac1d0ab0c6baa34f5?&d=robohash&r=x",
             });
-            setProgress(100);
+            setProgress(66);
         } else {
             router.replace("/");
             return;
         }
+
+        fetch(api.ALL_TRANSACTIONS_URL, {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
+                    },
+                })
+                    .then((res) => {
+                        switch (res.status) {
+                            case 200:
+                                setProgress(80);
+                                res.json().then((data) => {
+                                    setTransactions(data.DATA);
+                                    console.log(data.DATA);
+                                    setProgress(100);
+                                });
+                                break;
+                            case 400:
+                                res.json().then(({ MESSAGE }) => {
+                                    alert(MESSAGE);
+                                });
+                                break;
+                            case 500:
+                                alert(
+                                    "We are facing some issues at the moment. We are working on it. Please try again later.",
+                                );
+                                break;
+                            default:
+                                alert(
+                                    "Something went wrong. Please refresh the page and try again later.",
+                                );
+                                break;
+                        }
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        alert(
+                            "Something went wrong. Please refresh the page and try again later.",
+                        );
+                    })
+                    .finally(() => {
+                        setProgress(100);
+                    });
+
     }, [router]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (
@@ -94,7 +141,7 @@ const TransactionsPage = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Transactions</h1>
-                    <TransactionsTable />
+                    <TransactionsTable invoice={transactions}/>
                 </div>
             </SidebarInset>
         </SidebarProvider>

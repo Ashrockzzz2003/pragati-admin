@@ -19,71 +19,40 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Badge } from "../ui/badge";
 
-const invoices = [
-    {
-        invoice: "INV001",
-        paymentStatus: "Paid",
-        totalAmount: "$250.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV002",
-        paymentStatus: "Pending",
-        totalAmount: "$150.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV003",
-        paymentStatus: "Unpaid",
-        totalAmount: "$350.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV004",
-        paymentStatus: "Paid",
-        totalAmount: "$450.00",
-        paymentMethod: "Credit Card",
-    },
-    {
-        invoice: "INV005",
-        paymentStatus: "Paid",
-        totalAmount: "$550.00",
-        paymentMethod: "PayPal",
-    },
-    {
-        invoice: "INV006",
-        paymentStatus: "Pending",
-        totalAmount: "$200.00",
-        paymentMethod: "Bank Transfer",
-    },
-    {
-        invoice: "INV007",
-        paymentStatus: "Unpaid",
-        totalAmount: "$300.00",
-        paymentMethod: "Credit Card",
-    },
-];
+type Transactions = {
+    txnID: number;
+    userName: string;
+    userEmail: string;
+    transactionStatus: string;
+    event: string;
+    amount: number;
+};
 
-type SortKey = keyof (typeof invoices)[0];
+interface Transactions_Table {
+    invoice: Transactions[];
+}
 
-const TransactionsTable = () => {
-    const [methodFilter, setMethodFilter] = useState<string | "all">("all");
-    const [sortKey, setSortKey] = useState<SortKey>("invoice");
+type SortKey = keyof Transactions;
+
+const TransactionsTable: React.FC<Transactions_Table> = ({ invoice }) => {
+    const [eventFilter, setEventFilter] = useState("all");
+    const [statusFilter, setStatusFilter] = useState("all");
+    const [sortKey, setSortKey] = useState<SortKey>("txnID");
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     const uniqueMethods = useMemo(() => {
-        return Array.from(
-            new Set(invoices.map((invoice) => invoice.paymentMethod)),
-        );
-    }, []);
+        return Array.from(new Set(invoice.map((inv) => inv.event)));
+    }, [invoice]);
 
     const filteredAndSortedInvoices = useMemo(() => {
-        return invoices
-            .filter((invoice) =>
-                methodFilter != "all"
-                    ? invoice.paymentMethod === methodFilter
-                    : true,
+        const filtered = invoice
+            .filter((inv) => eventFilter === "all" || inv.event === eventFilter)
+            .filter(
+                (inv) =>
+                    statusFilter === "all" ||
+                    inv.transactionStatus === statusFilter,
             )
             .sort((a, b) => {
                 if (a[sortKey] < b[sortKey])
@@ -92,15 +61,12 @@ const TransactionsTable = () => {
                     return sortOrder === "asc" ? 1 : -1;
                 return 0;
             });
-    }, [methodFilter, sortKey, sortOrder]);
+        return filtered;
+    }, [eventFilter, statusFilter, sortKey, sortOrder, invoice]);
 
     const totalAmount = useMemo(() => {
         return filteredAndSortedInvoices
-            .reduce(
-                (sum, invoice) =>
-                    sum + Number.parseFloat(invoice.totalAmount.slice(1)),
-                0,
-            )
+            .reduce((sum, invoice) => sum + invoice.amount, 0)
             .toFixed(2);
     }, [filteredAndSortedInvoices]);
 
@@ -115,24 +81,43 @@ const TransactionsTable = () => {
 
     return (
         <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-                <span>Filter by Method:</span>
-                <Select
-                    onValueChange={(value) => setMethodFilter(value)}
-                    value={methodFilter}
-                >
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Select a method" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Methods</SelectItem>
-                        {uniqueMethods.map((method) => (
-                            <SelectItem key={method} value={method}>
-                                {method}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
+            <div className="flex items-center space-x-4">
+                {/* Filter by Event */}
+                <div>
+                    <span>Filter by Event:</span>
+                    <Select onValueChange={setEventFilter} value={eventFilter}>
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select an event" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Events</SelectItem>
+                            {uniqueMethods.map((method) => (
+                                <SelectItem key={method} value={method}>
+                                    {method}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
+                </div>
+
+                {/* Filter by Status */}
+                <div>
+                    <span>Filter by Status:</span>
+                    <Select
+                        onValueChange={(value) => setStatusFilter(value)}
+                        value={statusFilter}
+                    >
+                        <SelectTrigger className="w-[180px]">
+                            <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="all">All Statuses</SelectItem>
+                            <SelectItem value="0">Failed</SelectItem>
+                            <SelectItem value="1">Pending</SelectItem>
+                            <SelectItem value="2">Success</SelectItem>
+                        </SelectContent>
+                    </Select>
+                </div>
             </div>
             <Table>
                 <TableHeader>
@@ -140,34 +125,52 @@ const TransactionsTable = () => {
                         <TableHead className="w-[100px]">
                             <Button
                                 variant="ghost"
-                                onClick={() => handleSort("invoice")}
+                                onClick={() => handleSort("txnID")}
                             >
-                                Invoice
+                                Transaction ID
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
                         <TableHead>
                             <Button
                                 variant="ghost"
-                                onClick={() => handleSort("paymentStatus")}
+                                onClick={() => handleSort("userName")}
+                            >
+                                Name
+                                <ArrowUpDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </TableHead>
+                        <TableHead>
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleSort("userEmail")}
+                            >
+                                Email ID
+                                <ArrowUpDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </TableHead>
+                        <TableHead>
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleSort("event")}
+                            >
+                                Event Name
+                                <ArrowUpDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </TableHead>
+                        <TableHead>
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleSort("transactionStatus")}
                             >
                                 Status
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </TableHead>
-                        <TableHead>
-                            <Button
-                                variant="ghost"
-                                onClick={() => handleSort("paymentMethod")}
-                            >
-                                Method
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
                         <TableHead className="text-right">
                             <Button
                                 variant="ghost"
-                                onClick={() => handleSort("totalAmount")}
+                                onClick={() => handleSort("amount")}
                             >
                                 Amount
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
@@ -176,24 +179,43 @@ const TransactionsTable = () => {
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {filteredAndSortedInvoices.map((invoice) => (
-                        <TableRow key={invoice.invoice}>
+                    {filteredAndSortedInvoices.map((inv) => (
+                        <TableRow key={inv.txnID}>
                             <TableCell className="font-medium">
-                                {invoice.invoice}
+                                {inv.txnID}
                             </TableCell>
-                            <TableCell>{invoice.paymentStatus}</TableCell>
-                            <TableCell>{invoice.paymentMethod}</TableCell>
+                            <TableCell>{inv.userName}</TableCell>
+                            <TableCell>{inv.userEmail}</TableCell>
+                            <TableCell>Event Name</TableCell>
+                            <TableCell>
+                                <Badge
+                                    variant={
+                                        inv.transactionStatus === "0"
+                                            ? "destructive"
+                                            : inv.transactionStatus === "1"
+                                              ? "secondary"
+                                              : "default"
+                                    }
+                                >
+                                    {inv.transactionStatus === "0"
+                                        ? "Failed"
+                                        : inv.transactionStatus === "1"
+                                          ? "Pending"
+                                          : "Success"}
+                                </Badge>
+                            </TableCell>
+
                             <TableCell className="text-right">
-                                {invoice.totalAmount}
+                                ₹ {inv.amount}
                             </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell colSpan={3}>Total</TableCell>
+                        <TableCell colSpan={5}>Total</TableCell>
                         <TableCell className="text-right">
-                            ${totalAmount}
+                            ₹ {totalAmount}
                         </TableCell>
                     </TableRow>
                 </TableFooter>
