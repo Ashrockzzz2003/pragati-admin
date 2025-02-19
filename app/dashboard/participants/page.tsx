@@ -103,8 +103,8 @@ const ParticipantsPage = () => {
             <AppSidebar
                 user={user}
                 navItems={generateNavItems(
-                    "/dashboard/participants/",
-                    "/dashboard/participants/",
+                    "/dashboard/participants",
+                    "/dashboard/participants",
                 )}
             />
             <SidebarInset>

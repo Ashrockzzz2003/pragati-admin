@@ -57,7 +57,7 @@ const TransactionsPage = () => {
             <AppSidebar
                 user={user}
                 navItems={generateNavItems(
-                    "/dashboard/revenue/transactions",
+                    "/dashboard/revenue",
                     "/dashboard/revenue/transactions",
                 )}
             />

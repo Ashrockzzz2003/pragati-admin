@@ -34,7 +34,7 @@ const navItems = [
             },
             {
                 title: "Event-Wise",
-                url: "/dashboard/participants/",
+                url: "/dashboard/participants",
             },
         ],
     },

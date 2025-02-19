@@ -57,7 +57,7 @@ const AllParticipants = () => {
             <AppSidebar
                 user={user}
                 navItems={generateNavItems(
-                    "/dashboard/participants/search",
+                    "/dashboard/participants",
                     "/dashboard/participants/search",
                 )}
             />
