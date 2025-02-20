@@ -234,7 +234,7 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
                                           : "Success"}
                                 </Badge>
 
-                                {inv.transactionStatus === "2" && (
+                                {inv.transactionStatus === "1" && (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <Link
