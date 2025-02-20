@@ -21,6 +21,7 @@ import {
 import { generateNavItems } from "@/lib/nav-manager";
 import TransactionsTable from "@/components/revenue/transactions-table";
 import { api } from "@/lib/api";
+import { Binoculars } from "lucide-react";
 
 const TransactionsPage = () => {
     const [user, setUser] = useState({
@@ -165,6 +166,14 @@ const TransactionsPage = () => {
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Transactions</h1>
                     <TransactionsTable invoice={transactions} events={events} />
+                    {transactions.length === 0 && (
+                            <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4">
+                                <Binoculars className="w-128 h-128 my-1" />
+                                <p className="text-lg font-semibold text-foreground">
+                                    No transactions made yet.
+                                </p>
+                            </div>
+                        )}
                 </div>
             </SidebarInset>
         </SidebarProvider>
