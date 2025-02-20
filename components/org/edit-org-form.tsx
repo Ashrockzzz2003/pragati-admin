@@ -58,6 +58,10 @@ const editOrg = (
                         alert(MESSAGE);
                     });
                     break;
+                case 401:
+                    secureLocalStorage.clear();
+                    window.location.href = "/";
+                    break;
                 case 500:
                     alert(
                         "We are facing some issues at the moment. We are working on it. Please try again later.",

@@ -122,6 +122,10 @@ export default function Page() {
                             alert(MESSAGE);
                         });
                         break;
+                    case 401:
+                        secureLocalStorage.clear();
+                        router.replace("/");
+                        break;
                     case 500:
                         alert(
                             "We are facing some issues at the moment. We are working on it. Please try again later.",
@@ -171,6 +175,10 @@ export default function Page() {
                         res.json().then(({ MESSAGE }) => {
                             alert(MESSAGE);
                         });
+                        break;
+                    case 401:
+                        secureLocalStorage.clear();
+                        router.replace("/");
                         break;
                     case 500:
                         alert(
@@ -224,6 +232,10 @@ export default function Page() {
                         res.json().then(({ MESSAGE }) => {
                             alert(MESSAGE);
                         });
+                        break;
+                    case 401:
+                        secureLocalStorage.clear();
+                        router.replace("/");
                         break;
                     case 500:
                         alert(
@@ -291,6 +303,10 @@ export default function Page() {
                         res.json().then(({ MESSAGE }) => {
                             alert(MESSAGE);
                         });
+                        break;
+                    case 401:
+                        secureLocalStorage.clear();
+                        router.replace("/");
                         break;
                     case 500:
                         alert(
