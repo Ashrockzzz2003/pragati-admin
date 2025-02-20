@@ -73,7 +73,9 @@ const RevenuePage: React.FC<Revenue_Data> = ({ invoice, events }) => {
             <Card className="flex flex-col">
                 <CardHeader className="items-center pb-0">
                     <CardTitle>Revenue Distribution</CardTitle>
-                    <CardDescription>Between Management and Non Management Games</CardDescription>
+                    <CardDescription>
+                        Between Management and Non Management Games
+                    </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 pb-0">
                     <ChartContainer
@@ -111,12 +113,22 @@ const RevenuePage: React.FC<Revenue_Data> = ({ invoice, events }) => {
                                                         y={viewBox.cy}
                                                         className="fill-foreground text-3xl font-bold"
                                                     >
-                                                        ₹{parseInt(String(totalRevenue), 10).toLocaleString("en-IN")}
-
+                                                        ₹
+                                                        {parseInt(
+                                                            String(
+                                                                totalRevenue,
+                                                            ),
+                                                            10,
+                                                        ).toLocaleString(
+                                                            "en-IN",
+                                                        )}
                                                     </tspan>
                                                     <tspan
                                                         x={viewBox.cx}
-                                                        y={(viewBox.cy || 0) + 24}
+                                                        y={
+                                                            (viewBox.cy || 0) +
+                                                            24
+                                                        }
                                                         className="fill-muted-foreground"
                                                     >
                                                         Total Revenue
@@ -144,10 +156,11 @@ const RevenuePage: React.FC<Revenue_Data> = ({ invoice, events }) => {
                         </CardHeader>
                         <CardContent className="flex flex-col items-center">
                             <p className="text-4xl font-bold">
-                                
-                            ₹{parseInt(String(rev.revenue), 10).toLocaleString("en-IN")}
-
-
+                                ₹
+                                {parseInt(
+                                    String(rev.revenue),
+                                    10,
+                                ).toLocaleString("en-IN")}
                             </p>
                         </CardContent>
                     </Card>

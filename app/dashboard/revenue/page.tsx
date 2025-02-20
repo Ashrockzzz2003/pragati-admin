@@ -89,33 +89,32 @@ const Revenue = () => {
                 );
             })
             .finally(() => {
-                setProgress(80);
+                setProgress(100);
             });
 
-            fetch(api.ALL_EVENTS_URL, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
-                },
+        fetch(api.ALL_EVENTS_URL, {
+            method: "GET",
+            headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
+            },
+        })
+            .then((eventRes) => {
+                if (eventRes.status === 200) {
+                    eventRes.json().then((eventData) => {
+                        setEvents(eventData.DATA);
+                        setProgress(80);
+                    });
+                } else {
+                    alert("Failed to fetch event data.");
+                }
             })
-                .then((eventRes) => {
-                    if (eventRes.status === 200) {
-                        eventRes.json().then((eventData) => {
-                            setEvents(eventData.DATA);
-                            setProgress(100);
-                        });
-                    } else {
-                        alert("Failed to fetch event data.");
-                    }
-                })
-                .catch((err) => {
-                    console.error("Error fetching event data", err);
-                })
-                .finally(() => {
-                    setProgress(100);
-                });;
-
+            .catch((err) => {
+                console.error("Error fetching event data", err);
+            })
+            .finally(() => {
+                setProgress(100);
+            });
     }, [router]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (
@@ -162,7 +161,7 @@ const Revenue = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Revenue</h1>
-                    <RevenuePage invoice={transactions} events={events}/>
+                    <RevenuePage invoice={transactions} events={events} />
                 </div>
             </SidebarInset>
         </SidebarProvider>

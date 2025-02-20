@@ -11,7 +11,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
-import { ArrowUpDown } from "lucide-react";
+import { ArrowUpDown, CircleFadingArrowUpIcon } from "lucide-react";
 import {
     Select,
     SelectContent,
@@ -19,13 +19,12 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
-import { Badge } from "../ui/badge";
+import { Badge } from "@/components/ui/badge";
 import {
     Tooltip,
     TooltipTrigger,
     TooltipContent,
 } from "@/components/ui/tooltip";
-import { Link as LinkIcon } from "lucide-react";
 import Link from "next/link";
 import { api } from "@/lib/api";
 
@@ -210,12 +209,15 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
                                 {inv.txnID}
                             </TableCell>
                             <TableCell>
-                                {inv.userName} | {inv.userEmail}
+                                <div>{inv.userName}</div>
+                                <div className="text-sm text-gray-500">
+                                    {inv.userEmail}
+                                </div>
                             </TableCell>
                             <TableCell>
                                 {eventMap[inv.eventID] || "Unknown Event"}
                             </TableCell>
-                            <TableCell className="flex items-center gap-2">
+                            <TableCell className="flex flex-row justify-start items-center align-middle gap-2 h-full mt-2">
                                 <Badge
                                     variant={
                                         inv.transactionStatus === "0"
@@ -232,7 +234,7 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
                                           : "Success"}
                                 </Badge>
 
-                                {inv.transactionStatus === "1" && (
+                                {inv.transactionStatus === "2" && (
                                     <Tooltip>
                                         <TooltipTrigger asChild>
                                             <Link
@@ -241,7 +243,7 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
                                                 rel="noopener noreferrer"
                                                 className="text-white"
                                             >
-                                                <LinkIcon
+                                                <CircleFadingArrowUpIcon
                                                     size={16}
                                                     className="hover:text-green-500"
                                                 />
@@ -253,7 +255,6 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
                                     </Tooltip>
                                 )}
                             </TableCell>
-
                             <TableCell className="text-right">
                                 ₹ {inv.amount}
                             </TableCell>

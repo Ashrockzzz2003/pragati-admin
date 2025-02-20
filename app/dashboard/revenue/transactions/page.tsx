@@ -91,7 +91,7 @@ const TransactionsPage = () => {
                 );
             })
             .finally(() => {
-                setProgress(80);
+                setProgress(100);
             });
 
         fetch(api.ALL_EVENTS_URL, {
@@ -165,15 +165,23 @@ const TransactionsPage = () => {
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
                     <h1 className="text-2xl font-semibold">Transactions</h1>
-                    <TransactionsTable invoice={transactions} events={events} />
-                    {transactions.length === 0 && (
-                            <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4">
-                                <Binoculars className="w-128 h-128 my-1" />
-                                <p className="text-lg font-semibold text-foreground">
-                                    No transactions made yet.
-                                </p>
-                            </div>
-                        )}
+                    {transactions.length === 0 ? (
+                        <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4">
+                            <Binoculars className="w-128 h-128 my-1" />
+                            <p className="text-lg font-semibold text-foreground">
+                                No transactions made yet.
+                            </p>
+                            <p className="text-xs text-foreground">
+                                Transactions made by participants will appear
+                                here. Sit back and relax.
+                            </p>
+                        </div>
+                    ) : (
+                        <TransactionsTable
+                            invoice={transactions}
+                            events={events}
+                        />
+                    )}
                 </div>
             </SidebarInset>
         </SidebarProvider>
