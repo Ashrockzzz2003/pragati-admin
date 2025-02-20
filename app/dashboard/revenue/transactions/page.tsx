@@ -45,7 +45,7 @@ const TransactionsPage = () => {
                 email: _user.userEmail,
                 avatar: "https://gravatar.com/avatar/dd55aeae8806246ac1d0ab0c6baa34f5?&d=robohash&r=x",
             });
-            setProgress(50);
+            setProgress(100);
         } else {
             router.replace("/");
             return;
