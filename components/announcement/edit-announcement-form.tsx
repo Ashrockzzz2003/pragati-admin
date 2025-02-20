@@ -26,7 +26,7 @@ import { Edit3, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import secureLocalStorage from "react-secure-storage";
 import { api } from "@/lib/api";
-import { Textarea } from "../ui/textarea";
+import { Textarea } from "@/components/ui/textarea";
 
 const editNotification = (
     notificationID: string,

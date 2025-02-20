@@ -14,7 +14,7 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
-import { Button } from "../ui/button";
+import { Button } from "@/components/ui/button";
 
 const chartConfig = {
     participants: {

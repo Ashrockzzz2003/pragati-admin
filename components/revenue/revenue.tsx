@@ -15,10 +15,27 @@ import {
     ChartTooltipContent,
 } from "@/components/ui/chart";
 
+type Transactions = {
+    totalAmountPaid: number;
+    eventID: number;
+};
+
+type Events = {
+    eventID: number;
+    eventName: string;
+    isMgt: string;
+};
+
+interface Revenue_Data {
+    invoice: Transactions[];
+    events: Events[];
+}
+
 const chartData = [
     { event: "Management", visitors: 275, fill: "var(--color-mgmt)" },
     { event: "Non Management", visitors: 275, fill: "var(--color-nonmgmt)" },
 ];
+
 const chartConfig = {
     mgmt: {
         label: "Management Games",
@@ -30,33 +47,35 @@ const chartConfig = {
     },
 } satisfies ChartConfig;
 
-const event_revenue = [
-    { id: "event1", name: "Hackathon", revenue: 150000 },
-    { id: "event2", name: "AI Workshop", revenue: 75000 },
-    { id: "event3", name: "Tech Talk", revenue: 120000 },
-    { id: "event4", name: "Startup Pitch Fest", revenue: 90000 },
-    { id: "event5", name: "Entrepreneurship Summit", revenue: 200000 },
-    { id: "event6", name: "Marketing Masterclass", revenue: 85000 },
-    { id: "event7", name: "Product Management Bootcamp", revenue: 95000 },
-    { id: "event8", name: "Business Analytics Workshop", revenue: 110000 },
-    { id: "event9", name: "Investment & Finance Forum", revenue: 170000 },
-    { id: "event10", name: "Leadership & Strategy Conference", revenue: 80000 },
-    { id: "event11", name: "Sales & Negotiation Training", revenue: 65000 },
-];
+const RevenuePage: React.FC<Revenue_Data> = ({ invoice, events }) => {
+    // Calculate total revenue
+    const totalRevenue = useMemo(() => {
+        return invoice.reduce((sum, inv) => sum + inv.totalAmountPaid, 0);
+    }, [invoice]);
 
-const RevenuePage = () => {
-    const totalVisitors = useMemo(() => {
-        return chartData.reduce((acc, curr) => acc + curr.visitors, 0);
-    }, []);
+    // Calculate event-wise revenue
+    const event_revenue = useMemo(() => {
+        return events.map((event) => {
+            const revenue = invoice
+                .filter((inv) => inv.eventID === event.eventID)
+                .reduce((sum, inv) => sum + inv.totalAmountPaid, 0);
+
+            return {
+                id: event.eventID,
+                name: event.eventName,
+                revenue,
+            };
+        });
+    }, [invoice, events]);
 
     return (
         <div>
-            {" "}
-            <div className="flex flex-col flex-wrap gap-4"></div>
             <Card className="flex flex-col">
                 <CardHeader className="items-center pb-0">
-                    <CardTitle>Pie Chart - Donut with Text</CardTitle>
-                    <CardDescription>January - June 2024</CardDescription>
+                    <CardTitle>Revenue Distribution</CardTitle>
+                    <CardDescription>
+                        Between Management and Non Management Games
+                    </CardDescription>
                 </CardHeader>
                 <CardContent className="flex-1 pb-0">
                     <ChartContainer
@@ -71,7 +90,7 @@ const RevenuePage = () => {
                             <Pie
                                 data={chartData}
                                 dataKey="visitors"
-                                nameKey="browser"
+                                nameKey="event"
                                 innerRadius={60}
                                 strokeWidth={5}
                             >
@@ -94,7 +113,15 @@ const RevenuePage = () => {
                                                         y={viewBox.cy}
                                                         className="fill-foreground text-3xl font-bold"
                                                     >
-                                                        {totalVisitors.toLocaleString()}
+                                                        ₹
+                                                        {parseInt(
+                                                            String(
+                                                                totalRevenue,
+                                                            ),
+                                                            10,
+                                                        ).toLocaleString(
+                                                            "en-IN",
+                                                        )}
                                                     </tspan>
                                                     <tspan
                                                         x={viewBox.cx}
@@ -104,11 +131,12 @@ const RevenuePage = () => {
                                                         }
                                                         className="fill-muted-foreground"
                                                     >
-                                                        Visitors
+                                                        Total Revenue
                                                     </tspan>
                                                 </text>
                                             );
                                         }
+                                        return null;
                                     }}
                                 />
                             </Pie>
@@ -116,6 +144,7 @@ const RevenuePage = () => {
                     </ChartContainer>
                 </CardContent>
             </Card>
+
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-6">
                 {event_revenue.map((rev) => (
                     <Card
@@ -127,7 +156,11 @@ const RevenuePage = () => {
                         </CardHeader>
                         <CardContent className="flex flex-col items-center">
                             <p className="text-4xl font-bold">
-                                ₹ {rev.revenue}
+                                ₹
+                                {parseInt(
+                                    String(rev.revenue),
+                                    10,
+                                ).toLocaleString("en-IN")}
                             </p>
                         </CardContent>
                     </Card>

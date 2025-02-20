@@ -20,6 +20,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
 import ParticipantsTable from "@/components/participants/participants-table";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Info } from "lucide-react";
 
 const AllParticipants = () => {
     const [user, setUser] = useState({
@@ -93,6 +95,14 @@ const AllParticipants = () => {
                     </div>
                 </header>
                 <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                    <Alert className="bg-yellow-500 text-black">
+                        <Info className="h-4 w-4" color="black" />
+                        <AlertTitle className="font-bold">Heads up!</AlertTitle>
+                        <AlertDescription>
+                            This is a Work in Progress. The data displayed below
+                            is dummy data.
+                        </AlertDescription>
+                    </Alert>
                     <h1 className="text-2xl font-semibold">
                         {" "}
                         All Participants
