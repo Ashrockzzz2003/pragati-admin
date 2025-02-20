@@ -1,5 +1,5 @@
-// const BASE_URL: string = "http://localhost:8080/api";
-const BASE_URL: string = "https://pragati.amrita.edu/api";
+const BASE_URL: string = "http://localhost:8080/api";
+// const BASE_URL: string = "https://pragati.amrita.edu/api";
 
 export const api = {
     LOGIN_URL: `${BASE_URL}/auth/login`,
@@ -11,4 +11,5 @@ export const api = {
     ALL_EVENTS_URL: `${BASE_URL}/event/all`,
     REVENUE_URL: `${BASE_URL}/admin/amountGenerated`,
     ALL_TRANSACTIONS_URL: `${BASE_URL}/admin/transactions`,
+    VERIFY_TRANSACTION_URL: `https://pragati.amrita.edu/transactions/verify`,
 };

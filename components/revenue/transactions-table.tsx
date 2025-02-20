@@ -20,6 +20,14 @@ import {
     SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "../ui/badge";
+import {
+    Tooltip,
+    TooltipTrigger,
+    TooltipContent,
+} from "@/components/ui/tooltip";
+import { Link as LinkIcon } from "lucide-react";
+import Link from "next/link";
+import { api } from "@/lib/api";
 
 type Transactions = {
     txnID: number;
@@ -42,7 +50,10 @@ interface Transactions_Table {
 
 type SortKey = keyof Transactions;
 
-const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) => {
+const TransactionsTable: React.FC<Transactions_Table> = ({
+    invoice,
+    events,
+}) => {
     const [eventFilter, setEventFilter] = useState("all");
     const [statusFilter, setStatusFilter] = useState("all");
     const [sortKey, setSortKey] = useState<SortKey>("txnID");
@@ -53,15 +64,22 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) =>
     }, [invoice]);
 
     const eventMap = useMemo(() => {
-        return events.reduce((acc, event) => {
-            acc[event.eventID] = event.eventName;
-            return acc;
-        }, {} as Record<number, string>);
+        return events.reduce(
+            (acc, event) => {
+                acc[event.eventID] = event.eventName;
+                return acc;
+            },
+            {} as Record<number, string>,
+        );
     }, [events]);
 
     const filteredAndSortedInvoices = useMemo(() => {
         const filtered = invoice
-            .filter((inv) => eventFilter === "all" || inv.eventID === Number(eventFilter))
+            .filter(
+                (inv) =>
+                    eventFilter === "all" ||
+                    inv.eventID === Number(eventFilter),
+            )
             .filter(
                 (inv) =>
                     statusFilter === "all" ||
@@ -105,7 +123,10 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) =>
                         <SelectContent>
                             <SelectItem value="all">All Events</SelectItem>
                             {uniqueMethods.map((eventID) => (
-                                <SelectItem key={eventID} value={String(eventID)}>
+                                <SelectItem
+                                    key={eventID}
+                                    value={String(eventID)}
+                                >
                                     {eventMap[eventID]}
                                 </SelectItem>
                             ))}
@@ -149,16 +170,7 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) =>
                                 variant="ghost"
                                 onClick={() => handleSort("userName")}
                             >
-                                Name
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </TableHead>
-                        <TableHead>
-                            <Button
-                                variant="ghost"
-                                onClick={() => handleSort("userEmail")}
-                            >
-                                Email ID
+                                User Details
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
@@ -197,12 +209,13 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) =>
                             <TableCell className="font-medium">
                                 {inv.txnID}
                             </TableCell>
-                            <TableCell>{inv.userName}</TableCell>
-                            <TableCell>{inv.userEmail}</TableCell>
+                            <TableCell>
+                                {inv.userName} | {inv.userEmail}
+                            </TableCell>
                             <TableCell>
                                 {eventMap[inv.eventID] || "Unknown Event"}
                             </TableCell>
-                            <TableCell>
+                            <TableCell className="flex items-center gap-2">
                                 <Badge
                                     variant={
                                         inv.transactionStatus === "0"
@@ -218,6 +231,27 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) =>
                                           ? "Pending"
                                           : "Success"}
                                 </Badge>
+
+                                {inv.transactionStatus === "1" && (
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <Link
+                                                href={`${api.VERIFY_TRANSACTION_URL}/${inv.txnID}`}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                className="text-white"
+                                            >
+                                                <LinkIcon
+                                                    size={16}
+                                                    className="hover:text-green-500"
+                                                />
+                                            </Link>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            Verify Transaction
+                                        </TooltipContent>
+                                    </Tooltip>
+                                )}
                             </TableCell>
 
                             <TableCell className="text-right">
@@ -228,7 +262,7 @@ const TransactionsTable: React.FC<Transactions_Table> = ({ invoice, events }) =>
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell colSpan={5}>Total</TableCell>
+                        <TableCell colSpan={4}>Total</TableCell>
                         <TableCell className="text-right">
                             ₹ {totalAmount}
                         </TableCell>
