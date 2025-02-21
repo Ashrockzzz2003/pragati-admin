@@ -96,9 +96,11 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
 
     const totalAmount = useMemo(() => {
         return filteredAndSortedInvoices
+            .filter(invoice => invoice.transactionStatus === "2")
             .reduce((sum, invoice) => sum + invoice.amount, 0)
             .toFixed(2);
     }, [filteredAndSortedInvoices]);
+    
 
     const handleSort = (key: SortKey) => {
         if (key === sortKey) {
