@@ -55,17 +55,19 @@ const RevenuePage: React.FC<Revenue_Data> = ({ invoice, events }) => {
 
     // Calculate event-wise revenue
     const event_revenue = useMemo(() => {
-        return events.map((event) => {
-            const revenue = invoice
-                .filter((inv) => inv.eventID === event.eventID)
-                .reduce((sum, inv) => sum + inv.totalAmountPaid, 0);
+        return events
+            .map((event) => {
+                const revenue = invoice
+                    .filter((inv) => inv.eventID === event.eventID)
+                    .reduce((sum, inv) => sum + inv.totalAmountPaid, 0);
 
-            return {
-                id: event.eventID,
-                name: event.eventName,
-                revenue,
-            };
-        });
+                return {
+                    id: event.eventID,
+                    name: event.eventName,
+                    revenue,
+                };
+            })
+            .sort((a, b) => b.revenue - a.revenue);
     }, [invoice, events]);
 
     return (
