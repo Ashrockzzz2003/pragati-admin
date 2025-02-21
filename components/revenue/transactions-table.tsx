@@ -96,6 +96,7 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
 
     const totalAmount = useMemo(() => {
         return filteredAndSortedInvoices
+            .filter((invoice) => invoice.transactionStatus === "2")
             .reduce((sum, invoice) => sum + invoice.amount, 0)
             .toFixed(2);
     }, [filteredAndSortedInvoices]);
@@ -255,7 +256,15 @@ const TransactionsTable: React.FC<Transactions_Table> = ({
                                     </Tooltip>
                                 )}
                             </TableCell>
-                            <TableCell className="text-right">
+                            <TableCell
+                                className={`text-right ${
+                                    inv.transactionStatus === "0"
+                                        ? "text-red-500"
+                                        : inv.transactionStatus === "1"
+                                          ? "text-yellow-500"
+                                          : "text-white"
+                                }`}
+                            >
                                 ₹ {inv.amount}
                             </TableCell>
                         </TableRow>
