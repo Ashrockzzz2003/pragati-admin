@@ -61,6 +61,26 @@ const ParticipantsPage = () => {
                     case 200:
                         setProgress(80);
                         res.json().then((data) => {
+                            if (data.DATA.length === 0) {
+                                setEvents([]);
+                                setProgress(100);
+                                return;
+                            }
+
+                            // sort data by numRegistrations
+                            data.DATA.sort(
+                                (
+                                    a: {
+                                        numRegistrations: string;
+                                    },
+                                    b: {
+                                        numRegistrations: string;
+                                    },
+                                ) =>
+                                    parseInt(b.numRegistrations.toString()) -
+                                    parseInt(a.numRegistrations.toString()),
+                            );
+
                             setEvents(data.DATA);
                             setProgress(100);
                         });
