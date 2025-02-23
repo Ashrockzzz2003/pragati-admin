@@ -9,139 +9,108 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowUpDown } from "lucide-react";
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
+import { Download } from "lucide-react";
 
-const participants = [
-    { id: 1, name: "Alice Johnson", events: ["Workshop", "Conference"] },
-    { id: 2, name: "Bob Smith", events: ["Conference", "Seminar"] },
-    { id: 3, name: "Charlie Brown", events: ["Workshop", "Seminar"] },
-    { id: 4, name: "Diana Ross", events: ["Conference"] },
-    {
-        id: 5,
-        name: "Ethan Hunt",
-        events: ["Workshop", "Conference", "Seminar"],
-    },
-    { id: 6, name: "Fiona Apple", events: ["Seminar"] },
-    { id: 7, name: "George Clooney", events: ["Workshop", "Conference"] },
-    { id: 8, name: "Hannah Montana", events: ["Conference", "Seminar"] },
-    { id: 9, name: "Ian McKellen", events: ["Workshop"] },
-    { id: 10, name: "Julia Roberts", events: ["Conference", "Seminar"] },
-];
+type Participant = {
+    userID: number;
+    userName: string;
+    userEmail: string;
+    collegeName: string;
+    phoneNumber: string;
+    collegeCity: string;
+    registeredEvents:
+        | { eventID: number; eventFee: number; eventName: string }[]
+        | null;
+};
 
-type SortKey = "name" | "events";
+interface ParticipantsTableProps {
+    participants: Participant[];
+}
 
-const ParticipantsTable = () => {
+const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
+    participants,
+}) => {
     const [nameSearch, setNameSearch] = useState("");
-    const [eventFilter, setEventFilter] = useState<string | "all">("all");
-    const [sortKey, setSortKey] = useState<SortKey>("name");
-    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-    const uniqueEvents = useMemo(() => {
-        return Array.from(new Set(participants.flatMap((p) => p.events)));
-    }, []);
-
-    const filteredAndSortedParticipants = useMemo(() => {
-        return participants
-            .filter(
-                (participant) =>
-                    participant.name
-                        .toLowerCase()
-                        .includes(nameSearch.toLowerCase()) &&
-                    (eventFilter != "all"
-                        ? participant.events.includes(eventFilter)
-                        : true),
-            )
-            .sort((a, b) => {
-                if (sortKey === "name") {
-                    return sortOrder === "asc"
-                        ? a.name.localeCompare(b.name)
-                        : b.name.localeCompare(a.name);
-                } else {
-                    // For events, sort by the number of events
-                    const aEvents = a.events.length;
-                    const bEvents = b.events.length;
-                    return sortOrder === "asc"
-                        ? aEvents - bEvents
-                        : bEvents - aEvents;
-                }
-            });
-    }, [nameSearch, eventFilter, sortKey, sortOrder]);
-
-    const handleSort = (key: SortKey) => {
-        if (key === sortKey) {
-            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
-        } else {
-            setSortKey(key);
-            setSortOrder("asc");
-        }
-    };
+    const filteredParticipants = useMemo(() => {
+        return participants.filter((participant) =>
+            participant.userName
+                .toLowerCase()
+                .includes(nameSearch.toLowerCase()),
+        );
+    }, [nameSearch, participants]);
 
     return (
-        <div className="space-y-4">
-            <div className="flex items-center space-x-2">
-                <Input
-                    placeholder="Search names..."
-                    value={nameSearch}
-                    onChange={(e) => setNameSearch(e.target.value)}
-                    className="max-w-sm"
-                />
-                <Select
-                    onValueChange={(value) => setEventFilter(value)}
-                    value={eventFilter}
-                >
-                    <SelectTrigger className="w-[180px]">
-                        <SelectValue placeholder="Filter by event" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">All Events</SelectItem>
-                        {uniqueEvents.map((event) => (
-                            <SelectItem key={event} value={event}>
-                                {event}
-                            </SelectItem>
-                        ))}
-                    </SelectContent>
-                </Select>
-            </div>
+        <div className="space-y-4 mt-8">
+            <Input
+                placeholder="Search names..."
+                value={nameSearch}
+                onChange={(e) => setNameSearch(e.target.value)}
+                className="max-w-sm"
+            />
+            <Button
+                className="w-fit md:w-auto whitespace-normal leading-3 break-words mt-2"
+                disabled
+            >
+                <Download size={16} className="mr-2" />
+                Download - Coming Soon
+            </Button>
+
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead className="w-[300px]">
-                            <Button
-                                variant="ghost"
-                                onClick={() => handleSort("name")}
-                            >
-                                Name
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </TableHead>
-                        <TableHead>
-                            <Button
-                                variant="ghost"
-                                onClick={() => handleSort("events")}
-                            >
-                                Events
-                                <ArrowUpDown className="ml-2 h-4 w-4" />
-                            </Button>
-                        </TableHead>
+                        <TableHead>User Details</TableHead>
+                        <TableHead>College</TableHead>
+                        <TableHead>Registered Events</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {filteredAndSortedParticipants.map((participant) => (
-                        <TableRow key={participant.id}>
-                            <TableCell className="font-medium">
-                                {participant.name}
+                    {filteredParticipants.map((participant) => (
+                        <TableRow key={participant.userID}>
+                            <TableCell className="w-fit">
+                                <div>
+                                    <p className="font-semibold">
+                                        {participant.userName}
+                                    </p>
+                                    <p className="text-xs text-foreground font-light">
+                                        {participant.userEmail}
+                                    </p>
+                                    <p className="text-xs text-foreground font-light">
+                                        {participant.phoneNumber}
+                                    </p>
+                                </div>
                             </TableCell>
                             <TableCell>
-                                {participant.events.join(", ")}
+                                <div>
+                                    <p className="text-sm font-semibold">
+                                        {participant.collegeName}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {participant.collegeCity}
+                                    </p>
+                                </div>
+                            </TableCell>
+                            <TableCell>
+                                {participant.registeredEvents &&
+                                participant.registeredEvents.length > 0 ? (
+                                    <div className="flex flex-wrap gap-2">
+                                        {participant.registeredEvents.map(
+                                            (e) => (
+                                                <span
+                                                    key={e.eventID}
+                                                    className="rounded-lg bg-primary p-1.5 text-xs font-semibold text-primary-foreground border border-black"
+                                                >
+                                                    {e.eventName}
+                                                </span>
+                                            ),
+                                        )}
+                                    </div>
+                                ) : (
+                                    <span className="text-sm text-muted-foreground">
+                                        -
+                                    </span>
+                                )}
                             </TableCell>
                         </TableRow>
                     ))}

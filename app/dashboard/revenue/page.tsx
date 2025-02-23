@@ -62,8 +62,9 @@ const Revenue = () => {
                         setProgress(70);
                         res.json().then((data) => {
                             setTransactions(data.DATA);
-                            setProgress(80);
+                            setProgress(100);
                         });
+
                         break;
                     case 400:
                         res.json().then(({ MESSAGE }) => {
@@ -107,7 +108,7 @@ const Revenue = () => {
                 if (eventRes.status === 200) {
                     eventRes.json().then((eventData) => {
                         setEvents(eventData.DATA);
-                        setProgress(80);
+                        setProgress(100);
                     });
                 } else {
                     alert("Failed to fetch event data.");

@@ -114,7 +114,6 @@ export default function Page() {
                         setProgress(80);
                         res.json().then((data) => {
                             setOrgs(data.DATA);
-                            console.log(data.DATA);
                             setProgress(100);
                         });
                         break;
