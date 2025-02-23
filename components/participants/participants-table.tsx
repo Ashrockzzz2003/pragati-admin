@@ -16,8 +16,6 @@ type Participant = {
     userName: string;
     userEmail: string;
     collegeName: string;
-    needAccommodationDay1: number;
-    needAccommodationDay2: number;
     registeredEvents:
         | { eventID: number; eventFee: number; eventName: string }[]
         | null;
@@ -35,7 +33,7 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
         return participants.filter((participant) =>
             participant.userName
                 .toLowerCase()
-                .includes(nameSearch.toLowerCase()),
+                .includes(nameSearch.toLowerCase())
         );
     }, [nameSearch, participants]);
 
@@ -54,8 +52,6 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                         <TableHead>Name</TableHead>
                         <TableHead>Email</TableHead>
                         <TableHead>College</TableHead>
-                        <TableHead>Day 1 Stay</TableHead>
-                        <TableHead>Day 2 Stay</TableHead>
                         <TableHead>Registered Events</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -68,22 +64,12 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                             <TableCell>{participant.userEmail}</TableCell>
                             <TableCell>{participant.collegeName}</TableCell>
                             <TableCell>
-                                {participant.needAccommodationDay1
-                                    ? "✅"
-                                    : "❌"}
-                            </TableCell>
-                            <TableCell>
-                                {participant.needAccommodationDay2
-                                    ? "✅"
-                                    : "❌"}
-                            </TableCell>
-                            <TableCell>
                                 {participant.registeredEvents &&
                                 participant.registeredEvents.length > 0
                                     ? participant.registeredEvents
                                           .map((e) => e.eventName)
                                           .join(", ")
-                                    : ""}
+                                    : "No Events"}
                             </TableCell>
                         </TableRow>
                     ))}

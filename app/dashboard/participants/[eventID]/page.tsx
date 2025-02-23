@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -20,16 +20,19 @@ import {
     BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
-import ParticipantsChart from "@/components/participants/participants-chart";
+import EventWiseParticipantsTable from "@/components/participants/event-wise";
+import { Binoculars } from "lucide-react";
 
 const ParticipantsPage = () => {
+    const params = useParams();
+    const eventID = params.eventID;
     const [user, setUser] = useState({
         name: "",
         email: "",
         avatar: "",
     });
     const [progress, setProgress] = useState<number>(0);
-    const [events, setEvents] = useState([]);
+
     const [participants, setParticipants] = useState([]);
 
     const router = useRouter();
@@ -51,47 +54,25 @@ const ParticipantsPage = () => {
             return;
         }
 
-        fetch(api.ALL_EVENTS_URL, {
+        fetch(`${api.PARTICIPANTS_EVENTS_URL}/${eventID}`, {
             method: "GET",
             headers: {
                 "Content-Type": "application/json",
+                Authorization: `Bearer ${secureLocalStorage.getItem("t")}`,
             },
         })
-            .then((res) => {
-                switch (res.status) {
-                    case 200:
-                        setProgress(80);
-                        res.json().then((data) => {
-                            setEvents(data.DATA);
-                            setProgress(100);
-                        });
-                        break;
-                    case 400:
-                        res.json().then(({ MESSAGE }) => {
-                            alert(MESSAGE);
-                        });
-                        break;
-                    case 401:
-                        secureLocalStorage.clear();
-                        router.replace("/");
-                        break;
-                    case 500:
-                        alert(
-                            "We are facing some issues at the moment. We are working on it. Please try again later.",
-                        );
-                        break;
-                    default:
-                        alert(
-                            "Something went wrong. Please refresh the page and try again later.",
-                        );
-                        break;
+            .then((partRes) => {
+                if (partRes.status === 200) {
+                    partRes.json().then((partData) => {
+                        setParticipants(partData.DATA);
+                        setProgress(100);
+                    });
+                } else {
+                    alert("Failed to fetch participant data.");
                 }
             })
             .catch((err) => {
-                console.error(err);
-                alert(
-                    "Something went wrong. Please refresh the page and try again later.",
-                );
+                console.error("Error fetching participant data", err);
             })
             .finally(() => {
                 setProgress(100);
@@ -146,7 +127,18 @@ const ParticipantsPage = () => {
                     <h1 className="text-2xl font-semibold">
                         Event-wise Participants
                     </h1>
-                    <ParticipantsChart events={events} />
+                    {Array.isArray(participants) && participants.length > 0 ? (
+                        <EventWiseParticipantsTable
+                            participants={participants}
+                        />
+                    ) : (
+                        <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4">
+                            <Binoculars className="w-10 h-10 my-2" />{" "}
+                            <p className="text-lg font-semibold text-foreground">
+                                No participants found for this event
+                            </p>
+                        </div>
+                    )}
                 </div>
             </SidebarInset>
         </SidebarProvider>

@@ -13,4 +13,5 @@ export const api = {
     ALL_TRANSACTIONS_URL: `${BASE_URL}/admin/transactions`,
     VERIFY_TRANSACTION_URL: `https://pragati.amrita.edu/transactions/verify`,
     ALL_PARTICIPANTS_URL: `${BASE_URL}/admin/all`,
+    PARTICIPANTS_EVENTS_URL: `${BASE_URL}/admin/studentsOfEvent`,
 };

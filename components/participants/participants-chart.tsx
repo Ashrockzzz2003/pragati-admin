@@ -15,6 +15,7 @@ import {
 } from "@/components/ui/card";
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
+import { useRouter } from "next/navigation";
 
 const chartConfig = {
     participants: {
@@ -38,6 +39,7 @@ interface ParticipantsChartProps {
 }
 
 const ParticipantsChart: React.FC<ParticipantsChartProps> = ({ events }) => {
+    const router = useRouter(); 
     const totalRegistrations = events.reduce(
         (sum, event) => sum + event.numRegistrations,
         0,
@@ -146,7 +148,6 @@ const ParticipantsChart: React.FC<ParticipantsChartProps> = ({ events }) => {
                     <Card
                         key={event.eventID}
                         className="cursor-pointer hover:shadow-lg transition-shadow"
-                        // onClick={() => router.push(`/participants/${event.id}`)}
                     >
                         <CardHeader className="text-center">
                             <CardTitle>{event.eventName}</CardTitle>
@@ -161,7 +162,7 @@ const ParticipantsChart: React.FC<ParticipantsChartProps> = ({ events }) => {
                         </CardContent>
                         <CardContent>
                             <div className="flex flex-col">
-                                <Button className="w-full md:w-auto whitespace-normal leading-3 break-words">
+                                <Button className="w-full md:w-auto whitespace-normal leading-3 break-words" onClick={() => router.push(`/dashboard/participants/${event.eventID}`)}>
                                     View Participants
                                 </Button>
                                 <Button className="w-full md:w-auto whitespace-normal leading-3 break-words mt-2">
