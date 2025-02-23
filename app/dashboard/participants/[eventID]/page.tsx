@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import secureLocalStorage from "react-secure-storage";
 import { Progress } from "@/components/ui/progress";
 import {
@@ -24,8 +24,9 @@ import EventWiseParticipantsTable from "@/components/participants/event-wise";
 import { Binoculars } from "lucide-react";
 
 const ParticipantsPage = () => {
-    const params = useParams();
-    const eventID = params.eventID;
+    const { eventID } = useParams();
+    const searchParams = useSearchParams();
+
     const [user, setUser] = useState({
         name: "",
         email: "",
@@ -33,7 +34,19 @@ const ParticipantsPage = () => {
     });
     const [progress, setProgress] = useState<number>(0);
 
-    const [participants, setParticipants] = useState([]);
+    const [participants, setParticipants] = useState<
+        {
+            registrationID: number;
+            userID: number;
+            userName: string;
+            userEmail: string;
+            teamName: string;
+            role: string;
+            collegeName: string;
+            collegeCity: string;
+            phoneNumber: string;
+        }[]
+    >([]);
 
     const router = useRouter();
 
@@ -64,7 +77,80 @@ const ParticipantsPage = () => {
             .then((partRes) => {
                 if (partRes.status === 200) {
                     partRes.json().then((partData) => {
-                        setParticipants(partData.DATA);
+                        if (partData.DATA.length === 0) {
+                            setProgress(100);
+                            return;
+                        }
+
+                        if (
+                            typeof partData.DATA[0].teamName === "string" &&
+                            partData.DATA[0].teamName !== ""
+                        ) {
+                            // eslint-disable-next-line prefer-const
+                            let partList: {
+                                registrationID: number;
+                                userID: number;
+                                userName: string;
+                                userEmail: string;
+                                teamName: string;
+                                role: string;
+                                collegeName: string;
+                                collegeCity: string;
+                                phoneNumber: string;
+                            }[] = [];
+
+                            partData.DATA.forEach(
+                                (part: {
+                                    registrationID: number;
+                                    teamName: string;
+                                    teamMembers: {
+                                        userID: number;
+                                        userName: string;
+                                        userEmail: string;
+                                        phoneNumber: string;
+                                        collegeName: string;
+                                        collegeCity: string;
+                                        role: string;
+                                    }[];
+                                }) => {
+                                    part.teamMembers.forEach(
+                                        (team: {
+                                            userID: number;
+                                            userName: string;
+                                            userEmail: string;
+                                            collegeName: string;
+                                            collegeCity: string;
+                                            phoneNumber: string;
+                                            role: string;
+                                        }) => {
+                                            partList.push({
+                                                registrationID:
+                                                    part.registrationID,
+                                                userID: team.userID,
+                                                userName: team.userName,
+                                                userEmail: team.userEmail,
+                                                teamName: part.teamName,
+                                                role: team.role,
+                                                collegeName: team.collegeName,
+                                                collegeCity: team.collegeCity,
+                                                phoneNumber: team.phoneNumber,
+                                            });
+                                        },
+                                    );
+                                },
+                            );
+
+                            // sort by registration ID
+                            partList.sort(
+                                (a, b) => a.registrationID - b.registrationID,
+                            );
+                            setParticipants(partList);
+
+                            setProgress(70);
+                        } else {
+                            setParticipants(partData.DATA);
+                        }
+
                         setProgress(100);
                     });
                 } else {
@@ -77,7 +163,7 @@ const ParticipantsPage = () => {
             .finally(() => {
                 setProgress(100);
             });
-    }, [router]);
+    }, [router, eventID]);
 
     return user?.name === "" || user?.email === "" || progress < 100 ? (
         <div className="flex items-center justify-center h-screen w-[50%] ml-auto mr-auto">
@@ -123,16 +209,22 @@ const ParticipantsPage = () => {
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                <div className="flex flex-1 flex-col p-4 pt-0">
                     <h1 className="text-2xl font-semibold">
-                        Event-wise Participants
+                        {searchParams.get("name") ?? "Event"} - Participants
                     </h1>
+                    {Array.isArray(participants) && participants.length > 0 && (
+                        <p className="text-sm text-muted-foreground">
+                            Total participants: {participants.length}
+                        </p>
+                    )}
+
                     {Array.isArray(participants) && participants.length > 0 ? (
                         <EventWiseParticipantsTable
                             participants={participants}
                         />
                     ) : (
-                        <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4">
+                        <div className="flex flex-col items-center justify-center bg-muted/50 rounded-md shadow-sm py-4 mt-4">
                             <Binoculars className="w-10 h-10 my-2" />{" "}
                             <p className="text-lg font-semibold text-foreground">
                                 No participants found for this event

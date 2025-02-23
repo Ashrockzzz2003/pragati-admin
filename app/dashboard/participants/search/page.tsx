@@ -20,8 +20,8 @@ import {
 } from "@/components/ui/breadcrumb";
 import { generateNavItems } from "@/lib/nav-manager";
 import ParticipantsTable from "@/components/participants/participants-table";
-import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { Info } from "lucide-react";
+// import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+// import { Info } from "lucide-react";
 import { api } from "@/lib/api";
 
 const AllParticipants = () => {
@@ -66,7 +66,7 @@ const AllParticipants = () => {
                             setParticipants(data.DATA);
                             setProgress(100);
                         });
-                        
+
                         break;
                     case 400:
                         res.json().then(({ MESSAGE }) => {
@@ -98,9 +98,8 @@ const AllParticipants = () => {
             .finally(() => {
                 setProgress(100);
             });
-
     }, [router]);
-    
+
     return user?.name === "" || user?.email === "" || progress < 100 ? (
         <div className="flex items-center justify-center h-screen w-[50%] ml-auto mr-auto">
             <Progress value={progress} />
@@ -145,7 +144,7 @@ const AllParticipants = () => {
                         </Breadcrumb>
                     </div>
                 </header>
-                <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
+                <div className="flex flex-1 flex-col p-4 pt-0">
                     {/* <Alert className="bg-yellow-500 text-black">
                         <Info className="h-4 w-4" color="black" />
                         <AlertTitle className="font-bold">Heads up!</AlertTitle>
@@ -156,8 +155,14 @@ const AllParticipants = () => {
                     </Alert> */}
                     <h1 className="text-2xl font-semibold">
                         {" "}
-                        All Participants
+                        Registered Participants for Pragati 2025
                     </h1>
+                    {Array.isArray(participants) && participants.length > 0 && (
+                        <p className="text-sm text-muted-foreground">
+                            Total participants: {participants.length}
+                        </p>
+                    )}
+
                     <ParticipantsTable participants={participants} />
                 </div>
             </SidebarInset>

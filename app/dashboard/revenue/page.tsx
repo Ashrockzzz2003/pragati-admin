@@ -64,7 +64,7 @@ const Revenue = () => {
                             setTransactions(data.DATA);
                             setProgress(100);
                         });
-                        
+
                         break;
                     case 400:
                         res.json().then(({ MESSAGE }) => {

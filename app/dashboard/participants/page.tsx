@@ -30,7 +30,6 @@ const ParticipantsPage = () => {
     });
     const [progress, setProgress] = useState<number>(0);
     const [events, setEvents] = useState([]);
-    const [participants, setParticipants] = useState([]);
 
     const router = useRouter();
 
