@@ -50,7 +50,10 @@ const chartConfig = {
 const RevenuePage: React.FC<Revenue_Data> = ({ invoice, events }) => {
     // Calculate total revenue
     const totalRevenue = useMemo(() => {
-        return invoice.reduce((sum, inv) => sum + inv.totalAmountPaid, 0);
+        return invoice.reduce(
+            (sum, inv) => sum + parseInt(inv.totalAmountPaid.toString()),
+            0,
+        );
     }, [invoice]);
 
     // Calculate event-wise revenue
@@ -59,7 +62,11 @@ const RevenuePage: React.FC<Revenue_Data> = ({ invoice, events }) => {
             .map((event) => {
                 const revenue = invoice
                     .filter((inv) => inv.eventID === event.eventID)
-                    .reduce((sum, inv) => sum + inv.totalAmountPaid, 0);
+                    .reduce(
+                        (sum, inv) =>
+                            sum + parseInt(inv.totalAmountPaid.toString()),
+                        0,
+                    );
 
                 return {
                     id: event.eventID,
