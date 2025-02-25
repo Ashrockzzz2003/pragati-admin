@@ -33,13 +33,17 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
     participants,
 }) => {
     const [nameSearch, setNameSearch] = useState("");
-    const [sortKey, setSortKey] = useState<"userName" | "collegeName">("userName");
+    const [sortKey, setSortKey] = useState<"userName" | "collegeName">(
+        "userName",
+    );
     const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     const filteredParticipants = useMemo(() => {
         return participants
             .filter((participant) =>
-                participant.userName.toLowerCase().includes(nameSearch.toLowerCase())
+                participant.userName
+                    .toLowerCase()
+                    .includes(nameSearch.toLowerCase()),
             )
             .sort((a, b) => {
                 const valA = a[sortKey].toLowerCase();
@@ -79,13 +83,19 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                 <TableHeader>
                     <TableRow>
                         <TableHead>
-                            <Button variant="ghost" onClick={() => handleSort("userName")}>
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleSort("userName")}
+                            >
                                 User Details
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
                         <TableHead>
-                            <Button variant="ghost" onClick={() => handleSort("collegeName")}>
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleSort("collegeName")}
+                            >
                                 College
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
@@ -98,28 +108,46 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                         <TableRow key={participant.userID}>
                             <TableCell className="w-fit">
                                 <div>
-                                    <p className="font-semibold">{participant.userName}</p>
-                                    <p className="text-xs text-foreground font-light">{participant.userEmail}</p>
-                                    <p className="text-xs text-foreground font-light">{participant.phoneNumber}</p>
+                                    <p className="font-semibold">
+                                        {participant.userName}
+                                    </p>
+                                    <p className="text-xs text-foreground font-light">
+                                        {participant.userEmail}
+                                    </p>
+                                    <p className="text-xs text-foreground font-light">
+                                        {participant.phoneNumber}
+                                    </p>
                                 </div>
                             </TableCell>
                             <TableCell>
                                 <div>
-                                    <p className="text-sm font-semibold">{participant.collegeName}</p>
-                                    <p className="text-xs text-muted-foreground">{participant.collegeCity}</p>
+                                    <p className="text-sm font-semibold">
+                                        {participant.collegeName}
+                                    </p>
+                                    <p className="text-xs text-muted-foreground">
+                                        {participant.collegeCity}
+                                    </p>
                                 </div>
                             </TableCell>
                             <TableCell>
-                                {participant.registeredEvents && participant.registeredEvents.length > 0 ? (
+                                {participant.registeredEvents &&
+                                participant.registeredEvents.length > 0 ? (
                                     <div className="flex flex-wrap gap-2">
-                                        {participant.registeredEvents.map((e) => (
-                                            <span key={e.eventID} className="rounded-lg bg-primary p-1.5 text-xs font-semibold text-primary-foreground border border-black">
-                                                {e.eventName}
-                                            </span>
-                                        ))}
+                                        {participant.registeredEvents.map(
+                                            (e) => (
+                                                <span
+                                                    key={e.eventID}
+                                                    className="rounded-lg bg-primary p-1.5 text-xs font-semibold text-primary-foreground border border-black"
+                                                >
+                                                    {e.eventName}
+                                                </span>
+                                            ),
+                                        )}
                                     </div>
                                 ) : (
-                                    <span className="text-sm text-muted-foreground">-</span>
+                                    <span className="text-sm text-muted-foreground">
+                                        -
+                                    </span>
                                 )}
                             </TableCell>
                         </TableRow>
