@@ -64,7 +64,7 @@ const TransactionsPage = () => {
                         setProgress(70);
                         res.json().then((data) => {
                             setTransactions(data.DATA);
-                            setProgress(80);
+                            setProgress(100);
                         });
                         break;
                     case 400:
