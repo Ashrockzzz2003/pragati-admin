@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, ArrowUpDown } from "lucide-react";
 
 type Participant = {
     userID: number;
@@ -33,13 +33,35 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
     participants,
 }) => {
     const [nameSearch, setNameSearch] = useState("");
+    const [sortKey, setSortKey] = useState<"userName" | "collegeName">(
+        "userName",
+    );
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+
     const filteredParticipants = useMemo(() => {
-        return participants.filter((participant) =>
-            participant.userName
-                .toLowerCase()
-                .includes(nameSearch.toLowerCase()),
-        );
-    }, [nameSearch, participants]);
+        return participants
+            .filter((participant) =>
+                participant.userName
+                    .toLowerCase()
+                    .includes(nameSearch.toLowerCase()),
+            )
+            .sort((a, b) => {
+                const valA = a[sortKey].toLowerCase();
+                const valB = b[sortKey].toLowerCase();
+                if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+                if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+                return 0;
+            });
+    }, [nameSearch, participants, sortKey, sortOrder]);
+
+    const handleSort = (key: "userName" | "collegeName") => {
+        if (key === sortKey) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSortKey(key);
+            setSortOrder("asc");
+        }
+    };
 
     return (
         <div className="space-y-4 mt-8">
@@ -60,8 +82,24 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
             <Table>
                 <TableHeader>
                     <TableRow>
-                        <TableHead>User Details</TableHead>
-                        <TableHead>College</TableHead>
+                        <TableHead>
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleSort("userName")}
+                            >
+                                User Details
+                                <ArrowUpDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </TableHead>
+                        <TableHead>
+                            <Button
+                                variant="ghost"
+                                onClick={() => handleSort("collegeName")}
+                            >
+                                College
+                                <ArrowUpDown className="ml-2 h-4 w-4" />
+                            </Button>
+                        </TableHead>
                         <TableHead>Registered Events</TableHead>
                     </TableRow>
                 </TableHeader>

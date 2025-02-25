@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Download } from "lucide-react";
+import { Download, ArrowUpDown } from "lucide-react";
 
 type Participant = {
     registrationID: number;
@@ -33,15 +33,37 @@ const EventWiseParticipantsTable: React.FC<EventWiseParticipantsTableProps> = ({
     participants,
 }) => {
     const [nameSearch, setNameSearch] = useState("");
+    const [sortKey, setSortKey] = useState<
+        "userName" | "collegeName" | "registrationID"
+    >("userName");
+    const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
     const filteredParticipants = useMemo(() => {
         if (!Array.isArray(participants)) return [];
-        return participants.filter((participant) =>
-            participant.userName
-                .toLowerCase()
-                .includes(nameSearch.toLowerCase()),
-        );
-    }, [nameSearch, participants]);
+
+        return participants
+            .filter((participant) =>
+                participant.userName
+                    .toLowerCase()
+                    .includes(nameSearch.toLowerCase()),
+            )
+            .sort((a, b) => {
+                const valA = a[sortKey].toString().toLowerCase();
+                const valB = b[sortKey].toString().toLowerCase();
+                if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+                if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+                return 0;
+            });
+    }, [nameSearch, participants, sortKey, sortOrder]);
+
+    const handleSort = (key: "userName" | "collegeName" | "registrationID") => {
+        if (key === sortKey) {
+            setSortOrder(sortOrder === "asc" ? "desc" : "asc");
+        } else {
+            setSortKey(key);
+            setSortOrder("asc");
+        }
+    };
 
     return (
         <div className="space-y-4 mt-8">
@@ -67,10 +89,34 @@ const EventWiseParticipantsTable: React.FC<EventWiseParticipantsTableProps> = ({
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>Reg ID</TableHead>
-                            <TableHead>User Details</TableHead>
+                            <TableHead>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => handleSort("registrationID")}
+                                >
+                                    RegID
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
+                            <TableHead>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => handleSort("userName")}
+                                >
+                                    User Details
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
                             <TableHead>Contact Number</TableHead>
-                            <TableHead>College</TableHead>
+                            <TableHead>
+                                <Button
+                                    variant="ghost"
+                                    onClick={() => handleSort("collegeName")}
+                                >
+                                    College
+                                    <ArrowUpDown className="ml-2 h-4 w-4" />
+                                </Button>
+                            </TableHead>
                             {participants.length > 0 &&
                                 typeof participants[0].teamName === "string" &&
                                 participants[0].teamName.length > 0 && (
