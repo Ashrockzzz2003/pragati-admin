@@ -102,19 +102,7 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
             };
         });
 
-        const csvFields = [
-            "S.No",
-            "Email",
-            "Name",
-            "Roll Number",
-            "Phone Number",
-            "College",
-            "Academics",
-            "Need Accommodation March 3",
-            "Need Accommodation March 4",
-            "Number of Events",
-            "Registered Events",
-        ];
+        const csvFields = Object.keys(csvData[0]);
 
         // Download the CSV file.
         const csv: string[] = csvData.map((row) =>
@@ -187,7 +175,7 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                                     <p className="text-xs text-foreground font-light">
                                         {participant.userEmail}
                                     </p>
-                                    <p className="text-xs text-foreground font-light">
+                                    <p className="text-xs text-primary font-light">
                                         {participant.phoneNumber}
                                     </p>
                                 </div>
