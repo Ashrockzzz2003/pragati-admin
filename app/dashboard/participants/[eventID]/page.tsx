@@ -45,6 +45,11 @@ const ParticipantsPage = () => {
             collegeName: string;
             collegeCity: string;
             phoneNumber: string;
+            rollNumber: string;
+            degree: string;
+            academicYear: number;
+            needAccommodationDay1: number;
+            needAccommodationDay2: number;
         }[]
     >([]);
 
@@ -97,6 +102,11 @@ const ParticipantsPage = () => {
                                 collegeName: string;
                                 collegeCity: string;
                                 phoneNumber: string;
+                                rollNumber: string;
+                                degree: string;
+                                academicYear: number;
+                                needAccommodationDay1: number;
+                                needAccommodationDay2: number;
                             }[] = [];
 
                             partData.DATA.forEach(
@@ -111,6 +121,11 @@ const ParticipantsPage = () => {
                                         collegeName: string;
                                         collegeCity: string;
                                         role: string;
+                                        rollNumber: string;
+                                        degree: string;
+                                        academicYear: number;
+                                        needAccommodationDay1: number;
+                                        needAccommodationDay2: number;
                                     }[];
                                 }) => {
                                     part.teamMembers.forEach(
@@ -122,6 +137,11 @@ const ParticipantsPage = () => {
                                             collegeCity: string;
                                             phoneNumber: string;
                                             role: string;
+                                            rollNumber: string;
+                                            degree: string;
+                                            academicYear: number;
+                                            needAccommodationDay1: number;
+                                            needAccommodationDay2: number;
                                         }) => {
                                             partList.push({
                                                 registrationID:
@@ -134,6 +154,13 @@ const ParticipantsPage = () => {
                                                 collegeName: team.collegeName,
                                                 collegeCity: team.collegeCity,
                                                 phoneNumber: team.phoneNumber,
+                                                rollNumber: team.rollNumber,
+                                                degree: team.degree,
+                                                academicYear: team.academicYear,
+                                                needAccommodationDay1:
+                                                    team.needAccommodationDay1,
+                                                needAccommodationDay2:
+                                                    team.needAccommodationDay2,
                                             });
                                         },
                                     );

@@ -23,6 +23,11 @@ type Participant = {
     registeredEvents:
         | { eventID: number; eventFee: number; eventName: string }[]
         | null;
+    rollNumber: string;
+    degree: string;
+    academicYear: number;
+    needAccommodationDay1: number;
+    needAccommodationDay2: number;
 };
 
 interface ParticipantsTableProps {
@@ -63,6 +68,61 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
         }
     };
 
+    const downloadParticipants = () => {
+        // Download participants in CSV format.
+        const csvData = participants.map((participant, i) => {
+            return {
+                "S.No": i + 1,
+                Email: participant.userEmail.replace(/,/g, " "),
+                Name: participant.userName.replace(/,/g, " "),
+                "Roll Number": participant.rollNumber.replace(/,/g, " "),
+                "Phone Number": participant.phoneNumber.replace(/,/g, " "),
+                College:
+                    participant.collegeName.replace(/,/g, " ") +
+                    " - " +
+                    participant.collegeCity.replace(/,/g, " "),
+                Academics:
+                    participant.degree.replace(/,/g, " ") +
+                    " - " +
+                    participant.academicYear.toString().replace(/,/g, " "),
+                "Need Accommodation March 3": participant.needAccommodationDay1
+                    ? "Yes"
+                    : "No",
+                "Need Accommodation March 4": participant.needAccommodationDay2
+                    ? "Yes"
+                    : "No",
+                "Number of Events": participant.registeredEvents
+                    ? participant.registeredEvents.length
+                    : 0,
+                "Registered Events": participant.registeredEvents
+                    ? participant.registeredEvents
+                          .map((e) => e.eventName.replace(/,/g, " "))
+                          .join("|")
+                    : "-",
+            };
+        });
+
+        const csvFields = Object.keys(csvData[0]);
+
+        // Download the CSV file.
+        const csv: string[] = csvData.map((row) =>
+            csvFields
+                .map((fieldName) =>
+                    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                    JSON.stringify((row as any)[fieldName], null, 2),
+                )
+                .join(","),
+        );
+        csv.unshift(csvFields.join(","));
+        const csvArray = csv.join("\r\n");
+
+        const a = document.createElement("a");
+        const file = new Blob([csvArray], { type: "text/csv" });
+        a.href = URL.createObjectURL(file);
+        a.download = `pragati-2025-participants-list-${new Date().getTime()}.csv`;
+        a.click();
+    };
+
     return (
         <div className="space-y-4 mt-8">
             <Input
@@ -73,10 +133,10 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
             />
             <Button
                 className="w-fit md:w-auto whitespace-normal leading-3 break-words mt-2"
-                disabled
+                onClick={downloadParticipants}
             >
                 <Download size={16} className="mr-2" />
-                Download - Coming Soon
+                Download List
             </Button>
 
             <Table>
@@ -100,6 +160,7 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                                 <ArrowUpDown className="ml-2 h-4 w-4" />
                             </Button>
                         </TableHead>
+                        <TableHead>Accommodation</TableHead>
                         <TableHead>Registered Events</TableHead>
                     </TableRow>
                 </TableHeader>
@@ -114,7 +175,7 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                                     <p className="text-xs text-foreground font-light">
                                         {participant.userEmail}
                                     </p>
-                                    <p className="text-xs text-foreground font-light">
+                                    <p className="text-xs text-primary font-light">
                                         {participant.phoneNumber}
                                     </p>
                                 </div>
@@ -127,7 +188,30 @@ const ParticipantsTable: React.FC<ParticipantsTableProps> = ({
                                     <p className="text-xs text-muted-foreground">
                                         {participant.collegeCity}
                                     </p>
+                                    <p className="text-xs text-primary">
+                                        {participant.rollNumber}
+                                    </p>
                                 </div>
+                            </TableCell>
+                            <TableCell>
+                                {participant.needAccommodationDay1 &&
+                                participant.needAccommodationDay2 ? (
+                                    <span className="text-sm text-primary">
+                                        Both Days
+                                    </span>
+                                ) : participant.needAccommodationDay1 ? (
+                                    <span className="text-sm text-primary">
+                                        March 3
+                                    </span>
+                                ) : participant.needAccommodationDay2 ? (
+                                    <span className="text-sm text-primary">
+                                        March 4
+                                    </span>
+                                ) : (
+                                    <span className="text-sm text-muted-foreground">
+                                        -
+                                    </span>
+                                )}
                             </TableCell>
                             <TableCell>
                                 {participant.registeredEvents &&
