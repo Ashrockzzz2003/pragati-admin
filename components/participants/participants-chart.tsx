@@ -16,7 +16,7 @@ import {
 import { ChartConfig, ChartContainer } from "@/components/ui/chart";
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
-import { Download, View } from "lucide-react";
+import { View } from "lucide-react";
 
 const chartConfig = {
     participants: {
@@ -177,14 +177,7 @@ const ParticipantsChart: React.FC<ParticipantsChartProps> = ({ events }) => {
                                     <View size={16} />
                                     {event.numRegistrations === 0
                                         ? "No participants"
-                                        : "View Participants"}
-                                </Button>
-                                <Button
-                                    className="w-full md:w-auto whitespace-normal leading-3 break-words mt-2"
-                                    disabled
-                                >
-                                    <Download size={16} />
-                                    Download - WIP
+                                        : "Participants"}
                                 </Button>
                             </div>
                         </CardContent>
