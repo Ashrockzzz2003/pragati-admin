@@ -73,12 +73,11 @@ const EventWiseParticipantsTable: React.FC<EventWiseParticipantsTableProps> = ({
     };
 
     const downloadParticipants = () => {
-        const i = 0;
         const csvData =
             participants.length > 0 &&
             typeof participants[0].teamName === "string" &&
             participants[0].teamName.length > 0
-                ? participants.map((participant) => {
+                ? participants.map((participant, i) => {
                       return {
                           "S.No": i + 1,
                           Email: participant.userEmail.replace(/,/g, " "),
@@ -109,7 +108,7 @@ const EventWiseParticipantsTable: React.FC<EventWiseParticipantsTableProps> = ({
                               participant.needAccommodationDay2 ? "Yes" : "No",
                       };
                   })
-                : participants.map((participant) => {
+                : participants.map((participant, i) => {
                       return {
                           "S.No": i + 1,
                           Email: participant.userEmail.replace(/,/g, " "),
