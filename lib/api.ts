@@ -1,5 +1,5 @@
 // const BASE_URL: string = "http://localhost:8080/api";
-const BASE_URL: string = "https://anokha.amrita.edu/api";
+const BASE_URL: string = "https://pragati.amrita.edu/api";
 
 export const api = {
     LOGIN_URL: `${BASE_URL}/auth/login`,
